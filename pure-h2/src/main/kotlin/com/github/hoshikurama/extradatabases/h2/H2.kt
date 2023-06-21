@@ -8,6 +8,23 @@ import com.google.common.collect.ImmutableList
 import java.util.concurrent.CompletableFuture
 
 class H2 : AsyncDatabase {
+    /*
+    private val connectionPool: JdbcConnectionPool
+    init {
+        val fixedURL = "jdbc:h2:file:$absoluteDataFolderPath/TicketManager-H2-V8.db"
+            .replace("C:", "")
+            .replace("\\", "/")
+
+        connectionPool = JdbcConnectionPool.create(fixedURL,"","")
+        connectionPool.maxConnections = 3
+    }
+
+    private inline fun <T> usingSession(crossinline f: Session.() -> T): T {
+        return using(sessionOf(connectionPool)) { f(it) }
+    }
+
+     */
+
     override fun closeDatabase() {
         TODO("Not yet implemented")
     }
@@ -601,5 +618,4 @@ class H2(
         }
     }
 }
- */
  */

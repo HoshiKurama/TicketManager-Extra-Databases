@@ -3,30 +3,28 @@ package com.github.hoshikurama.extradatabases.h2.parser
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket
+import java.util.*
 
-fun test() {
-    SQL.select(SQLTicket.id) {
-        SQLTicket.id equalTo 1
+fun main() {
+
+    val (sql, args) = SQL.select(SQLTicket.id) {
         SQLTicket.priority lessThan Ticket.Priority.HIGH
-    }
+        SQLAction.creator lastClosedBy Creator.User(UUID.randomUUID())
+        SQLAction.epochTime madeBefore 1
+    }.complete()
 
-    /*
-    SQL.update(ticketID = 3, NULL IF ADDING NEW TICKET) {
-        id = 4
-
-    }
-     */
+    println(sql)
 }
 
 object SQL {
 
     // For Tickets
-    fun select(vararg ticketArgs: TicketColumn, whereBuilder: Where.FromTicketColumn.() -> Unit): CompletedSQL {
+    fun select(vararg ticketArgs: TicketColumn, whereBuilder: Where.FromTicketColumn.() -> Unit): CompleteSQLChunk {
         val statement = StringBuilder()
         val arguments = mutableListOf<Any>()
 
-        val returns = if (ticketArgs.size == 1) "?"
-        else "(${List(ticketArgs.size) {"?"}.joinToString(",")})"
+        val returns = if (ticketArgs.size == 1) ticketArgs[0].sqlColumnName
+        else "(${ticketArgs.joinToString(",") { it.sqlColumnName }})"
         statement.append("SELECT $returns FROM \"TicketManager_V8_Tickets\" ")
 
         ticketArgs
@@ -43,11 +41,16 @@ object SQL {
         statement.append(whereParsed.statement)
         arguments.addAll(whereParsed.arguments)
 
-        return CompletedSQL(statement, arguments)
+        return CompleteSQLChunk(statement, arguments)
+    }
+    fun update(ticketID: Long, builder: Insert.FromTicketColumn.() -> Unit): CompleteSQLChunk {
+        val changes = Insert.FromTicketColumn()
+        builder(changes)
+        return changes.parse(ticketID)
     }
 
     // For Actions
-    fun select(vararg actionArgs: ActionColumn, whereBuilder: Where.FromActionColumn.() -> Unit): CompletedSQL {
+    fun select(vararg actionArgs: ActionColumn, whereBuilder: Where.FromActionColumn.() -> Unit): CompleteSQLChunk {
         val statement = StringBuilder()
         val arguments = mutableListOf<Any>()
 
@@ -69,22 +72,7 @@ object SQL {
         statement.append(whereParsed.statement)
         arguments.addAll(whereParsed.arguments)
 
-        return CompletedSQL(statement, arguments)
-    }
-
-    // For Tickets
-    fun update(ticketID: Long, builder: TicketUpdateBuilder.() -> Unit): CompletedSQL {
-        val changes = TicketUpdateBuilder()
-        builder(changes)
-
-        // VALUE = ? WHERE
-
-        val statement = StringBuilder("UPDATE TicketManager_V8_Tickets SET")
-    }
-
-    // For Tickets
-    fun insert(): CompletedSQL {
-
+        return CompleteSQLChunk(statement, arguments)
     }
 }
 
@@ -100,10 +88,10 @@ abstract class Insert {
     infix fun TicketStatusUpdate.setTo(update: Boolean) = table.add(standardSet() to update)
 
     class FromTicketColumn : Insert() {
-        fun parse() {
+        fun parse(id: Long): CompleteSQLChunk {
             val (statements, arguments) = table.unzip()
-
-            statements.joinToString(" AND ")
+            val stmt = statements.joinToString(" AND ")
+            return CompleteSQLChunk("UPDATE TicketManager_V8_Tickets SET $stmt WHERE ID = ?".asStringBuilder(), arguments.toMutableList().apply { add(id) })
         }
     }
 }
@@ -175,49 +163,67 @@ abstract class Where {
     }
 
     class FromTicketColumn : Where() {
-        fun parseSelect(): CompletedSQL {
+        fun parseSelect(): CompleteSQLChunk {
+            val finalSQLStatement = StringBuilder()
+            val finalArguments = mutableListOf<Any>()
+
             // Parse Ticket Column items
             val (ticketStatements, ticketArguments) = ticketTable.unzip()
-            val finalTicketStatement = "WHERE ${ticketStatements.joinToString(" AND ")}"
-            val finalTicketArguments = ticketArguments.flatten()
+            finalSQLStatement.append("WHERE ${ticketStatements.joinToString(" AND ")}")
+            finalArguments.addAll(ticketArguments.flatten())
 
             // Parse Action Column items
-            val (actionStatements, actionArguments) = actionTable.unzip()
-            val finalActionStatement = "ID IN (SELECT DISTINCT TICKET_ID FROM \"TicketManager_V8_Actions\" WHERE ${actionStatements.joinToString(" AND ")})"
-            val finalActionArguments = actionArguments.flatten()
+            if (actionTable.isNotEmpty()) {
+                val (actionStatements, actionArguments) = actionTable.unzip()
+                finalSQLStatement.append("AND ID IN (SELECT DISTINCT TICKET_ID FROM \"TicketManager_V8_Actions\" WHERE ${actionStatements.joinToString(" AND ")})")
+                finalArguments.addAll(actionArguments.flatten())
+            }
 
             // Combine and finish parse
-            return CompletedSQL(
-                statement = "$finalTicketStatement AND $finalActionStatement".asStringBuilder(),
-                arguments = finalTicketArguments + finalActionArguments
+            return CompleteSQLChunk(
+                statement = finalSQLStatement,
+                arguments = finalArguments
             )
         }
     }
 
     class FromActionColumn : Where() {
-        fun parseSelect(): CompletedSQL {
+        fun parseSelect(): CompleteSQLChunk {
+            val finalSQLStatement = StringBuilder()
+            val finalArguments = mutableListOf<Any>()
+
             // Parse Ticket Column items
             val (actionStatements, actionArguments) = actionTable.unzip()
-            val finalActionStatement = "WHERE ${actionStatements.joinToString(" AND ")}"
-            val finalActionArguments = actionArguments.flatten()
+            finalSQLStatement.append("WHERE ${actionStatements.joinToString(" AND ")}")
+            finalArguments.addAll(actionArguments.flatten())
 
             // Parse Ticket Column items
-            val (ticketStatements, ticketArguments) = ticketTable.unzip()
-            val finalTicketStatement = "TICKET_ID IN (SELECT DISTINCT ID FROM \"TicketManager_V8_Tickets\" WHERE ${ticketStatements.joinToString(" AND ")})"
-            val finalTicketArguments = ticketArguments.flatten()
+            if (ticketTable.isNotEmpty()) {
+                val (ticketStatements, ticketArguments) = ticketTable.unzip()
+                finalSQLStatement.append("AND TICKET_ID IN (SELECT DISTINCT ID FROM \"TicketManager_V8_Tickets\" WHERE ${ticketStatements.joinToString(" AND ")})")
+                finalArguments.addAll(ticketArguments.flatten())
+            }
 
             // Combine and finish parse
-            return CompletedSQL(
-                statement = "$finalActionStatement AND $finalTicketStatement".asStringBuilder(),
-                arguments = finalActionArguments + finalTicketArguments
+            return CompleteSQLChunk(
+                statement = finalSQLStatement,
+                arguments = finalArguments
             )
         }
     }
 }
 
-data class CompletedSQL(val statement: StringBuilder, val arguments: List<Any>)
+data class CompleteSQLChunk(val statement: StringBuilder, val arguments: MutableList<Any>)
+data class CompleteSQL(val statement: String, val arguments: List<Any>)
 
 fun String.asStringBuilder() = StringBuilder(this)
+fun CompleteSQLChunk.complete(): CompleteSQL {
+    statement.run {
+        trimEnd()
+        append(";")
+    }
+    return CompleteSQL(statement.toString(), arguments)
+}
 
 /*
 CREATE TABLE IF NOT EXISTS "TicketManager_V8_Actions"
