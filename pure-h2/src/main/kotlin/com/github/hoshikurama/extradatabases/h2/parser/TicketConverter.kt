@@ -1,25 +1,43 @@
 package com.github.hoshikurama.extradatabases.h2.parser
 
+import com.github.hoshikurama.extradatabases.h2.extensions.ASSIGNMENT_NOBODY
+import com.github.hoshikurama.extradatabases.h2.extensions.asByte
+import com.github.hoshikurama.extradatabases.h2.extensions.asString
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket
-import java.util.*
 
-fun main() {
+/*
+SELECT Ticket.ID/listOf(Ticket.ID, Ticket.CREATOR) FROM "TicketManager_V8_Tickets" WHERE
+SQL.SelectFromTicket(Ticket.ID) WHERE {
 
-    val (sql, args) = SQL.select(SQLTicket.id) {
-        SQLTicket.priority lessThan Ticket.Priority.HIGH
-        SQLAction.creator lastClosedBy Creator.User(UUID.randomUUID())
-        SQLAction.epochTime madeBefore 1
-    }.complete()
-
-    println(sql)
 }
+
+// NOTE: SQL SELECT vs internal select
+*/
 
 object SQL {
 
+    // Select Full Ticket
+    fun selectPartialTicket(whereBuilder: Where.TicketCol.() -> Unit): CompleteSQLChunk {
+        val statement = StringBuilder("SELECT * FROM \"TicketManager_V8_Tickets\" ")
+        val arguments = mutableListOf<Any>()
+
+        // Execute and parse where
+        val whereParsed = Where.TicketCol().run {
+            whereBuilder(this)
+            parseSelect()
+        }
+
+        // Add data to current parsing
+        statement.append(whereParsed.statement)
+        arguments.addAll(whereParsed.arguments)
+
+        return CompleteSQLChunk(statement, arguments)
+    }
+
     // For Tickets
-    fun select(vararg ticketArgs: TicketColumn, whereBuilder: Where.FromTicketColumn.() -> Unit): CompleteSQLChunk {
+    fun select(vararg ticketArgs: TicketColumn, whereBuilder: Where.TicketCol.() -> Unit): CompleteSQLChunk {
         val statement = StringBuilder()
         val arguments = mutableListOf<Any>()
 
@@ -32,7 +50,7 @@ object SQL {
             .run(arguments::addAll)
 
         // Execute and parse where
-        val whereParsed = Where.FromTicketColumn().run {
+        val whereParsed = Where.TicketCol().run {
             whereBuilder(this)
             parseSelect()
         }
@@ -50,6 +68,7 @@ object SQL {
     }
 
     // For Actions
+    /*
     fun select(vararg actionArgs: ActionColumn, whereBuilder: Where.FromActionColumn.() -> Unit): CompleteSQLChunk {
         val statement = StringBuilder()
         val arguments = mutableListOf<Any>()
@@ -74,6 +93,7 @@ object SQL {
 
         return CompleteSQLChunk(statement, arguments)
     }
+*/
 }
 
 abstract class Insert {
@@ -81,7 +101,7 @@ abstract class Insert {
     private fun TicketColumn.standardSet() = "$sqlColumnName = ?"
 
     // Ticket Table
-    infix fun TicketCreator.setTo(creator: Creator) = table.add(standardSet() to creator.asString())
+    //infix fun TicketCreator.setTo(creator: Creator) = table.add(standardSet() to creator.asString())
     infix fun TicketPriority.setTo(priority: Ticket.Priority) = table.add(standardSet() to priority.asByte())
     infix fun TicketStatus.setTo(status: Ticket.Status) = table.add(standardSet() to status.name)
     infix fun TicketAssignment.setTo(assignment: Assignment) = table.add(standardSet() to assignment.asString())
@@ -110,7 +130,7 @@ abstract class Where {
 
     // Ticket Table
     infix fun TicketID.equalTo(id: Long) = fromTicketCol("$sqlColumnName = ?", id)
-    infix fun TicketID.notEqualTo(id: Long) = fromTicketCol("$sqlColumnName != ?", id)
+    //infix fun TicketID.notEqualTo(id: Long) = fromTicketCol("$sqlColumnName != ?", id)
     infix fun TicketCreator.equalTo(creator: Creator) = fromTicketCol("$sqlColumnName = ?", creator.asString())
     infix fun TicketCreator.notEqualTo(creator: Creator) = fromTicketCol("$sqlColumnName != ?", creator.asString())
     infix fun TicketPriority.equalTo(priority: Ticket.Priority) = fromTicketCol("$sqlColumnName = ?", priority.asByte())
@@ -120,7 +140,7 @@ abstract class Where {
     infix fun TicketStatus.equalTo(status: Ticket.Status) = fromTicketCol("$sqlColumnName = ?", status.name)
     infix fun TicketStatus.notEqualTo(status: Ticket.Status) = fromTicketCol("$sqlColumnName != ?", status.name)
     infix fun TicketStatusUpdate.equalTo(statusUpdate: Boolean) = fromTicketCol("$sqlColumnName = ?", statusUpdate)
-    infix fun TicketStatusUpdate.notEqualTo(statusUpdate: Boolean) = fromTicketCol("$sqlColumnName != ?", statusUpdate)
+    //infix fun TicketStatusUpdate.notEqualTo(statusUpdate: Boolean) = fromTicketCol("$sqlColumnName != ?", statusUpdate)
     infix fun TicketAssignment.equalTo(assignment: Assignment) {
         if (assignment is Assignment.Nobody)
             ticketTable.add(StringBuilder("($sqlColumnName = $ASSIGNMENT_NOBODY OR $sqlColumnName IS NULL)") to emptyList())
@@ -130,6 +150,9 @@ abstract class Where {
         if (assignment is Assignment.Nobody)
             ticketTable.add(StringBuilder("($sqlColumnName != $ASSIGNMENT_NOBODY AND $sqlColumnName IS NOT NULL)") to emptyList())
         else fromTicketCol("ASSIGNED_TO != ?", assignment.asString())
+    }
+    infix fun TicketID.inside(ids: List<Ticket>) {
+        ticketTable.add("ID IN (${ids.joinToString(", ")})".asStringBuilder() to ids)
     }
 
     // Action Table
@@ -162,7 +185,23 @@ abstract class Where {
         )
     }
 
-    class FromTicketColumn : Where() {
+    class TicketCol : Where() {
+
+        fun andAny(builder: TicketCol.() -> Any) {
+            val partialStatement = StringBuilder("(")
+
+            val newWhere = TicketCol()
+            builder(newWhere)
+
+            val (statements, args) = newWhere.ticketTable.unzip()
+
+            statements.joinToString(" OR ")
+                .run(partialStatement::append)
+            partialStatement.append(")")
+
+            ticketTable.add(partialStatement to args)
+        }
+
         fun parseSelect(): CompleteSQLChunk {
             val finalSQLStatement = StringBuilder()
             val finalArguments = mutableListOf<Any>()
@@ -217,7 +256,7 @@ data class CompleteSQLChunk(val statement: StringBuilder, val arguments: Mutable
 data class CompleteSQL(val statement: String, val arguments: List<Any>)
 
 fun String.asStringBuilder() = StringBuilder(this)
-fun CompleteSQLChunk.complete(): CompleteSQL {
+fun CompleteSQLChunk.addEnding(): CompleteSQL {
     statement.run {
         trimEnd()
         append(";")
