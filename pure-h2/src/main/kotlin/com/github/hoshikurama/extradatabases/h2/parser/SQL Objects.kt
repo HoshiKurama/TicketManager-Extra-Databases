@@ -10,12 +10,13 @@ object SQLTicket {
 }
 
 object SQLAction {
-    val ticketID = ActionTicketID("TICKET_ID")
-    val type = ActionType("ACTION_TYPE")
+    //val ticketID = ActionTicketID("TICKET_ID")
+    //val type = ActionType("ACTION_TYPE")
     val creator = ActionCreator("CREATOR")
     val message = ActionMessage("MESSAGE")
     val epochTime = ActionEpochTime("EPOCH_TIME")
     val world = ActionWorld("WORLD")
+    val keyword = ActionKeyword
 }
 
 internal enum class ActionAsEnum {
