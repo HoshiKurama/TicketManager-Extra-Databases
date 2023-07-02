@@ -1,8 +1,13 @@
-package com.github.hoshikurama.extradatabases.h2.parser2.components
+package com.github.hoshikurama.extradatabases.h2.parser.components
 
-import com.github.hoshikurama.extradatabases.h2.parser2.*
-import java.util.*
+import com.github.hoshikurama.extradatabases.h2.parser.column.Action
+import com.github.hoshikurama.extradatabases.h2.parser.*
+import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket
+import com.github.hoshikurama.extradatabases.h2.parser.column.TicketMeta
+import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 
+typealias `Ticket.*` = Ticket.STAR
+typealias `Action.*` = Action.STAR
 /*
 sql {
     select {
@@ -31,25 +36,12 @@ fun main() {
 
     val (sql, args) = sql {
         selectAction {
-            +Action.Creator
-        }
-/*
-
-        selectTicket {
-            +Ticket.ID
-            +Ticket.Status
-            +Ticket.Priority
-            +Ticket.StatusUpdate
-            +Ticket.Assignment
-            +Ticket.Creator
+            +`Action.*`
 
             where {
-                Ticket.ID `==` 3
-                Ticket.Priority `＜` com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket.Priority.HIGH
-                Ticket.Creator `!=` Creator.User(UUID.randomUUID())
+                TicketMeta.LastClosedBy `==` Creator.Console
             }
         }
-         */
     }
     println(sql)
 }
@@ -64,7 +56,6 @@ class SQL {
 
 
     fun complete(): Completed {
-        // Note: Up to stages to determine how they get merged. List here just for raw
         stages.forEach { stage -> stage.parseStage()
             .also { statement.append(it.statement) }
             .also { arguments.addAll(it.arguments) }
@@ -77,14 +68,14 @@ class SQL {
     }
 
     fun selectTicket(init: Select.Ticket.() -> Unit) {
-        Select.Ticket
+        Select.Ticket()
             .apply(init)
             .parseStage()
             .addToSQL()
     }
 
     fun selectAction(init: Select.Action.() -> Unit) {
-        Select.Action
+        Select.Action()
             .apply(init)
             .parseStage()
             .addToSQL()

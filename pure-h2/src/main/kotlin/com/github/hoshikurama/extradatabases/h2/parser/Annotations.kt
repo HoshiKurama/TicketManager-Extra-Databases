@@ -1,8 +1,9 @@
-package com.github.hoshikurama.extradatabases.h2.parser2
+package com.github.hoshikurama.extradatabases.h2.parser
 
 @DslMarker
 annotation class SQLMarker
 
+/*
 @DslMarker
 annotation class SelectMarker
 
@@ -11,3 +12,5 @@ annotation class WhereTicketMarker
 
 @DslMarker
 annotation class WhereActionMarker
+
+ */

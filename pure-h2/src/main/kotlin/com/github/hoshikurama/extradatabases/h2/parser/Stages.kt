@@ -1,4 +1,4 @@
-package com.github.hoshikurama.extradatabases.h2.parser2
+package com.github.hoshikurama.extradatabases.h2.parser
 
 
 sealed interface Stage {

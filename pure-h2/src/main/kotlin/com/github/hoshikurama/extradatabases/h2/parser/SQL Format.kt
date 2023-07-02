@@ -1,15 +1,15 @@
-package com.github.hoshikurama.extradatabases.h2.parser2
+package com.github.hoshikurama.extradatabases.h2.parser
 
 fun StringBuilder.appendApply(other: String) = apply { append(other) }
 fun StringBuilder.appendApply(other: StringBuilder) = apply { append(other) }
-fun StringBuilder.appendAtFront(before: String) = StringBuilder(before).appendApply(this)
+fun StringBuilder.appendAtFront(before: String) = apply { insert(0, before) }
 
 /**
  * Collection of nice formatters
  */
 object SQLFormat {
 
-    fun joinTogether(
+    private fun joinTogether(
         stages: List<TerminalStage>,
         separator: String = "",
         prefix: String = "",
@@ -36,7 +36,16 @@ object SQLFormat {
     /**
      * Creates (stage,stage,...stage) format
      */
-    fun list(stages: List<TerminalStage>) = joinTogether(stages, separator = ",", prefix = "(", postfix = ")")
+    private fun guaranteedList(stages: List<TerminalStage>) = joinTogether(stages, separator = ",", prefix = "(", postfix = ")")
+
+    /**
+     * Runs guaranteed list if multiple entries exist, or no parenthesis otherwise
+     */
+    fun possibleList(stages: List<TerminalStage>) = when (stages.size) {
+        1 -> stages.first()
+        else -> guaranteedList(stages)
+    }
+
     /**
      * Adds spaces between statements
      */
@@ -44,8 +53,15 @@ object SQLFormat {
     /**
      * Adds " AND " between statements
      */
-    fun and(stages: List<TerminalStage>) = joinTogether(stages, separator = " AND ")
+    fun spacedAND(stages: List<TerminalStage>) = joinTogether(stages, separator = " AND ")
+    fun spacedOR(stages: List<TerminalStage>) = joinTogether(stages, separator = " OR ")
 }
 
 val emptyStage = TerminalStage("", emptyList())
 fun stringOnlyStage(str: String) = TerminalStage(str, emptyList())
+fun sbOnlyStage(sb: StringBuilder) = TerminalStage(sb, emptyList())
+
+fun TerminalStage.applyParenthesis() = apply {
+    statement.appendAtFront("(")
+    statement.append(")")
+}
