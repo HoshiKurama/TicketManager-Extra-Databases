@@ -3,6 +3,7 @@ package com.github.hoshikurama.extradatabases.h2
 import com.github.hoshikurama.extradatabases.h2.extensions.*
 import com.github.hoshikurama.extradatabases.h2.extensions.ActionAsEnum
 import com.github.hoshikurama.extradatabases.h2.parser.*
+import com.github.hoshikurama.extradatabases.h2.parser.components.SQL
 import com.github.hoshikurama.ticketmanager.api.common.database.AsyncDatabase
 import com.github.hoshikurama.ticketmanager.api.common.database.DBResult
 import com.github.hoshikurama.ticketmanager.api.common.database.SearchConstraints
@@ -19,6 +20,7 @@ import java.util.concurrent.CompletableFuture as CF
 
 class H2(absoluteDataFolderPath: String) : AsyncDatabase {
     private val connectionPool: JdbcConnectionPool
+
     init {
         val fixedURL = "jdbc:h2:file:$absoluteDataFolderPath/TicketManager-H2-V8.db"
             .replace("C:", "")
@@ -31,6 +33,21 @@ class H2(absoluteDataFolderPath: String) : AsyncDatabase {
     private inline fun <T> usingSession(crossinline f: Session.() -> T): T {
         return using(sessionOf(connectionPool)) { f(it) }
     }
+
+    override fun setAssignmentAsync(ticketID: Long, assignment: Assignment): CompletableFuture<Void> {
+
+
+        /*
+        override fun setAssignmentAsync(ticketID: Long, assignment: Assignment): CF<Void> = updateAsync(ticketID) {
+        SQLTicket.assignment setTo assignment
+    }
+     */
+    }
+}
+
+private inline fun SQL.Completed.queryOf() = queryOf(statement, *args.toTypedArray())
+/*
+H2 {
 
     private fun updateAsync(ticketID: Long, builder: Insert.FromTicketColumn.() -> Unit) = CF.runAsync {
         val (statement, args) = SQL.update(ticketID, builder).addEnding()
@@ -494,10 +511,6 @@ class H2(absoluteDataFolderPath: String) : AsyncDatabase {
                 returnedPage = fixedPage,
             )
         }
-    }
-
-    override fun setAssignmentAsync(ticketID: Long, assignment: Assignment): CF<Void> = updateAsync(ticketID) {
-        SQLTicket.assignment setTo assignment
     }
 
     override fun setCreatorStatusUpdateAsync(ticketID: Long, status: Boolean): CF<Void> = updateAsync(ticketID) {

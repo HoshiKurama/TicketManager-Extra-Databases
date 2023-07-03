@@ -5,9 +5,6 @@ import com.github.hoshikurama.extradatabases.h2.parser.column.ActionColumnField
 import com.github.hoshikurama.extradatabases.h2.parser.column.AugmentedColumn
 import com.github.hoshikurama.extradatabases.h2.parser.column.TicketColumnField
 
-const val TICKET_TABLE_NAME = "TicketManager_V8_Tickets"
-const val ACTION_TABLE_NAME = "TicketManager_V8_Actions"
-
 //@SelectMarker
 abstract class Select(private val tableName: String): CompositeStage {
     protected val columns = mutableListOf<TerminalStage>()
@@ -28,17 +25,6 @@ abstract class Select(private val tableName: String): CompositeStage {
                 .map(::stringOnlyStage)
                 .run(SQLFormat::spaces)
         ).run(SQLFormat::spaces)
-
-        /*
-        return listOf(
-            stringOnlyStage("SELECT"),
-            SQLFormat.list(columns),
-            stringOnlyStage("FROM \"$tableName\""),
-            stages
-                .map(Stage::parseStage)
-                .run(SQLFormat::and),
-        ).run(SQLFormat::spaces)
-         */ //TODO DELETE WHEN DONE
     }
 
     fun raw(sql: String) = rawEndings.add(sql)
@@ -50,7 +36,7 @@ abstract class Select(private val tableName: String): CompositeStage {
             .run(stages::add)
     }
 
-    class Ticket : Select(TICKET_TABLE_NAME) {
+    class Ticket : Select("TicketManager_V8_Tickets") {
         operator fun TicketColumnField.unaryPlus() {
             stringOnlyStage(sqlColumnName).run(columns::add)
         }
@@ -64,7 +50,7 @@ abstract class Select(private val tableName: String): CompositeStage {
         }
     }
 
-    class Action : Select(ACTION_TABLE_NAME) {
+    class Action : Select("TicketManager_V8_Actions") {
         operator fun ActionColumnField.unaryPlus() {
             stringOnlyStage(sqlColumnName).run(columns::add)
         }

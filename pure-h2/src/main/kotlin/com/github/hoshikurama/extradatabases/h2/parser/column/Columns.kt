@@ -19,31 +19,35 @@ sealed interface TicketColumnField : NamedColumn
 sealed interface ActionField
 sealed interface ActionColumnField : ActionField, NamedColumn
 
+// Combines interfaces above for objects. Useful for update dsl
+sealed interface TicketColumnObject<KotlinInput, SQLCompare> : TicketColumnField, InSupport<KotlinInput, SQLCompare>
+sealed interface ActionColumnObject<KotlinInput, SQLCompare> : ActionColumnField, InSupport<KotlinInput, SQLCompare>
+
 /**
  * Represents columns in the Ticket table
  */
 object Ticket {
-    object ID : TicketColumnField, InSupport<Long, Long> {
+    object ID : TicketColumnObject<Long, Long> {
         override val typeToInCompare: (Long) -> Long = { it }
         override val sqlColumnName = "ID"
     }
-    object Creator : TicketColumnField, InSupport<ActualCreator, String> {
+    object Creator : TicketColumnObject<ActualCreator, String> {
         override val typeToInCompare = ActualCreator::asString
         override val sqlColumnName = "CREATOR"
     }
-    object Priority : TicketColumnField, InSupport<ActualTicket.Priority, String> {
+    object Priority : TicketColumnObject<ActualTicket.Priority, String> {
         override val typeToInCompare = ActualTicket.Priority::name
         override val sqlColumnName = "PRIORITY"
     }
-    object Assignment : TicketColumnField, InSupport<ActualAssignment, String> {
+    object Assignment : TicketColumnObject<ActualAssignment, String> {
         override val typeToInCompare = ActualAssignment::asString
         override val sqlColumnName = "ASSIGNED_TO"
     }
-    object Status : TicketColumnField, InSupport<ActualTicket.Status, String> {
+    object Status : TicketColumnObject<ActualTicket.Status, String> {
         override val typeToInCompare = ActualTicket.Status::name
         override val sqlColumnName = "STATUS"
     }
-    object StatusUpdate : TicketColumnField, InSupport<Boolean, Boolean> {
+    object StatusUpdate : TicketColumnObject<Boolean, Boolean> {
         override val typeToInCompare: (Boolean) -> Boolean = { it }
         override val sqlColumnName = "STATUS_UPDATE_FOR_CREATOR"
     }
@@ -58,29 +62,32 @@ object Ticket {
  * Represents columns in the Action table
  */
 object Action {
-    object  TicketID: ActionColumnField, InSupport<Long, Long> {
+    object  TicketID: ActionColumnObject<Long, Long> {
         override val typeToInCompare: (Long) -> Long = { it }
         override val sqlColumnName = "TICKET_ID"
     }
-    object ActionType : ActionColumnField, InSupport<ActionAsEnum, String> {
+    object ActionType : ActionColumnObject<ActionAsEnum, String> {
         override val typeToInCompare = ActionAsEnum::name
         override val sqlColumnName = "ACTION_TYPE"
     }
-    object Creator : ActionColumnField, InSupport<ActualCreator, String> {
+    object Creator : ActionColumnObject<ActualCreator, String> {
         override val typeToInCompare = ActualCreator::asString
         override val sqlColumnName = "CREATOR"
     }
-    object World : ActionColumnField, InSupport<String, String> {
+    object World : ActionColumnObject<String, String> {
         override val typeToInCompare: (String) -> String = { it }
         override val sqlColumnName = "WORLD"
     }
-    object EpochTime : ActionColumnField {
+    object EpochTime : ActionColumnObject<Long, Long> {
+        override val typeToInCompare: (Long) -> Long = { it }
         override val sqlColumnName = "EPOCH_TIME"
     }
-    object Message : ActionColumnField {
+    object Message : ActionColumnObject<String, String> {
+        override val typeToInCompare: (String) -> String = { it }
         override val sqlColumnName = "MESSAGE"
     }
-    object ID : ActionColumnField {
+    object ID : ActionColumnObject<Long, Long> {
+        override val typeToInCompare: (Long) -> Long = { it }
         override val sqlColumnName = "ACTION_ID"
     }
 

@@ -3,8 +3,8 @@ package com.github.hoshikurama.extradatabases.h2.parser.components
 import com.github.hoshikurama.extradatabases.h2.parser.*
 import com.github.hoshikurama.extradatabases.h2.parser.column.Distinct
 import com.github.hoshikurama.extradatabases.h2.parser.column.NamedColumn
-import com.github.hoshikurama.extradatabases.h2.parser.infixfunctions.WhereExposeActionFunctions
-import com.github.hoshikurama.extradatabases.h2.parser.infixfunctions.WhereExposeTicketFunctions
+import com.github.hoshikurama.extradatabases.h2.parser.infixfunctions.where.WhereExposeActionFunctions
+import com.github.hoshikurama.extradatabases.h2.parser.infixfunctions.where.WhereExposeTicketFunctions
 import java.lang.StringBuilder
 import com.github.hoshikurama.extradatabases.h2.parser.column.Action as ActionColumn
 import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket as TicketColumn

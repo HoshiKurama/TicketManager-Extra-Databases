@@ -1,4 +1,4 @@
-package com.github.hoshikurama.extradatabases.h2.parser.infixfunctions
+package com.github.hoshikurama.extradatabases.h2.parser.infixfunctions.where
 
 import com.github.hoshikurama.extradatabases.h2.extensions.asByte
 import com.github.hoshikurama.extradatabases.h2.extensions.asString

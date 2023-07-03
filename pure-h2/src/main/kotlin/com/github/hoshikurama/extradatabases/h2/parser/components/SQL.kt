@@ -8,30 +8,14 @@ import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 
 typealias `Ticket.*` = Ticket.STAR
 typealias `Action.*` = Action.STAR
+
 /*
 sql {
-    select {
-        +Ticket.ID
-        +Ticket.Creator
-
-        where {
-            Ticket.ID `==` 1L
-            Ticket.Creator == CREATOR
-
-            actionTable {
-                ACTION.ID
-            }
-
-            raw {
-
-            }
-        }
+    updateTicket {
+        Ticket.Column `=` 35
     }
-    raw { +"ORDER BY THING" }
 }
-
-// NOTE: SQL SELECT vs internal select
-*/
+ */
 fun main() {
 
     val (sql, args) = sql {
