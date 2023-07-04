@@ -7,15 +7,15 @@ import com.github.hoshikurama.extradatabases.h2.parser.column.TicketColumnField
 
 //@SelectMarker
 abstract class Select(private val tableName: String): CompositeStage {
-    protected val columns = mutableListOf<TerminalStage>()
-    private val stages = mutableListOf<Stage>()
+    val columns = mutableListOf<TerminalStage>()
+    val stages = mutableListOf<Stage>()
     private val rawEndings = mutableListOf<String>()
 
     override fun parseStage(): TerminalStage {
         return listOf(
             listOf(
                 stringOnlyStage("SELECT"),
-                SQLFormat.possibleList(columns),
+                SQLFormat.spacedCommas(columns),
                 stringOnlyStage("FROM \"$tableName\""),
                 stages
                     .map(Stage::parseStage)
@@ -29,7 +29,7 @@ abstract class Select(private val tableName: String): CompositeStage {
 
     fun raw(sql: String) = rawEndings.add(sql)
 
-    protected fun <T : Where> where(startingValue: T, init: T.() -> Unit) {
+    inline fun <T : Where> whereSuper(startingValue: T, init: T.() -> Unit) {
         startingValue
             .apply(init)
             .parseStage()
@@ -44,9 +44,8 @@ abstract class Select(private val tableName: String): CompositeStage {
             parseStage().run(columns::add)
         }
 
-
-        fun where(init: Where.Ticket.() -> Unit) {
-            super.where(Where.Ticket(), init)
+        inline fun where(init: Where.Ticket.() -> Unit) {
+            whereSuper(Where.Ticket(), init)
         }
     }
 
@@ -58,8 +57,8 @@ abstract class Select(private val tableName: String): CompositeStage {
             parseStage().run(columns::add)
         }
 
-        fun where(init: Where.Action.() -> Unit) {
-            super.where(Where.Action(), init)
+        inline fun where(init: Where.Action.() -> Unit) {
+            whereSuper(Where.Action(), init)
         }
     }
 }

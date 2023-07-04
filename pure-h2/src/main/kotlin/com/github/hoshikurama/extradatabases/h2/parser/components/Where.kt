@@ -11,8 +11,8 @@ import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket as TicketCo
 
 //@WhereTicketMarker
 abstract class Where(useWhereClause: Boolean = true) : CompositeStage {
-    private val initialClause = if (useWhereClause) "WHERE " else ""
-    protected val stages = mutableListOf<Stage>()
+    val initialClause = if (useWhereClause) "WHERE " else ""
+    val stages = mutableListOf<Stage>()
     private val raws = mutableListOf<String>()
 
     override fun parseStage(): TerminalStage {
@@ -34,18 +34,18 @@ abstract class Where(useWhereClause: Boolean = true) : CompositeStage {
             .run(stages::add)
     }
 
-    fun selectTicket(init: Select.Ticket.() -> Unit) = selectT(Select.Ticket(), init)
-    fun selectAction(init: Select.Action.() -> Unit) = selectT(Select.Action(), init)
+    inline fun selectTicket(init: Select.Ticket.() -> Unit) = selectT(Select.Ticket(), init)
+    inline fun selectAction(init: Select.Action.() -> Unit) = selectT(Select.Action(), init)
     fun raw(sql: String) = raws.add(sql)
 
-    private fun <T : Select> selectT(t: T, init: T.() -> Unit): TerminalStage {
+    inline fun <T : Select> selectT(t: T, init: T.() -> Unit): TerminalStage {
         return t.apply(init)
             .parseStage()
     }
 
 
     class Ticket : WhereExposeTicketFunctions() {
-        fun whereAction(init: Action.() -> Unit) {
+        inline fun whereAction(init: Action.() -> Unit) {
             selectAction { // SELECT DISTINCT
                 +Distinct(ActionColumn.TicketID)
                 where(init)
@@ -60,7 +60,7 @@ abstract class Where(useWhereClause: Boolean = true) : CompositeStage {
     }
 
     class Action(useWhereClause: Boolean = true) : WhereExposeActionFunctions(useWhereClause) {
-        fun whereTicket(init: Ticket.() -> Unit) {
+        inline fun whereTicket(init: Ticket.() -> Unit) {
             selectTicket { // SELECT DISTINCT
                 +Distinct(TicketColumn.ID)
                 where(init)

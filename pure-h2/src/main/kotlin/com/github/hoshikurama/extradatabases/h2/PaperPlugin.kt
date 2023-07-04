@@ -8,15 +8,12 @@ import kotlin.io.path.absolutePathString
 class PaperPlugin : JavaPlugin() {
 
     override fun onEnable() {
-        /*
         Bukkit.getServicesManager()
             .getRegistration(TicketManagerDatabaseRegister::class.java)
             ?.provider
             ?.register("H2") {
-                H2(dataFolder.toPath().absolutePathString())
+                H2(dataFolder.toPath().absolutePathString(), 3)
             }
-
-         */
     }
 
     override fun onDisable() {

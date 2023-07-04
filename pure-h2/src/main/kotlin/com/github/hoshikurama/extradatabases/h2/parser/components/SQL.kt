@@ -1,36 +1,11 @@
 package com.github.hoshikurama.extradatabases.h2.parser.components
 
-import com.github.hoshikurama.extradatabases.h2.parser.column.Action
 import com.github.hoshikurama.extradatabases.h2.parser.*
-import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket
-import com.github.hoshikurama.extradatabases.h2.parser.column.TicketMeta
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 
-typealias `Ticket.*` = Ticket.STAR
-typealias `Action.*` = Action.STAR
+//typealias `Ticket.*` = Ticket.STAR
+//typealias `Action.*` = Action.STAR
 
-/*
-sql {
-    updateTicket {
-        Ticket.Column `=` 35
-    }
-}
- */
-fun main() {
-
-    val (sql, args) = sql {
-        selectAction {
-            +`Action.*`
-
-            where {
-                TicketMeta.LastClosedBy `==` Creator.Console
-            }
-        }
-    }
-    println(sql)
-}
-
-fun sql(init: SQL.() -> Unit): SQL.Completed = SQL().apply(init).complete()
+inline fun sql(init: SQL.() -> Unit): SQL.Completed = SQL().apply(init).complete()
 
 @SQLMarker
 class SQL {
@@ -51,21 +26,16 @@ class SQL {
         return Completed(statement.toString(), arguments)
     }
 
-    fun selectTicket(init: Select.Ticket.() -> Unit) {
-        Select.Ticket()
-            .apply(init)
-            .parseStage()
-            .addToSQL()
+    inline fun <T : Stage> T.initParseAndAdd(init: T.() -> Unit) {
+        apply(init).parseStage().addToSQL()
     }
 
-    fun selectAction(init: Select.Action.() -> Unit) {
-        Select.Action()
-            .apply(init)
-            .parseStage()
-            .addToSQL()
-    }
+    inline fun selectTicket(init: Select.Ticket.() -> Unit) = Select.Ticket().initParseAndAdd(init)
+    inline fun selectAction(init: Select.Action.() -> Unit) = Select.Action().initParseAndAdd(init)
+    inline fun update(ticketID: Long, init: Update.Ticket.() -> Unit) = Update.Ticket(listOf(ticketID)).initParseAndAdd(init)
+    inline fun update(ticketIDs: List<Long>, init: Update.Ticket.() -> Unit) = Update.Ticket(ticketIDs).initParseAndAdd(init)
 
-    private fun TerminalStage.addToSQL() {
+    fun TerminalStage.addToSQL() {
         this@SQL.statement.append(statement)
         this@SQL.arguments.addAll(arguments)
     }

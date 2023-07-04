@@ -34,19 +34,6 @@ object SQLFormat {
     }
 
     /**
-     * Creates (stage,stage,...stage) format
-     */
-    private fun guaranteedList(stages: List<TerminalStage>) = joinTogether(stages, separator = ",", prefix = "(", postfix = ")")
-
-    /**
-     * Runs guaranteed list if multiple entries exist, or no parenthesis otherwise
-     */
-    fun possibleList(stages: List<TerminalStage>) = when (stages.size) {
-        1 -> stages.first()
-        else -> guaranteedList(stages)
-    }
-
-    /**
      * Adds spaces between statements
      */
     fun spaces(stages: List<TerminalStage>) = joinTogether(stages, separator = " ")
@@ -55,9 +42,9 @@ object SQLFormat {
      */
     fun spacedAND(stages: List<TerminalStage>) = joinTogether(stages, separator = " AND ")
     fun spacedOR(stages: List<TerminalStage>) = joinTogether(stages, separator = " OR ")
+    fun spacedCommas(stages: List<TerminalStage>) = joinTogether(stages, separator = ", ")
 }
 
-val emptyStage = TerminalStage("", emptyList())
 fun stringOnlyStage(str: String) = TerminalStage(str, emptyList())
 fun sbOnlyStage(sb: StringBuilder) = TerminalStage(sb, emptyList())
 

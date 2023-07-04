@@ -26,6 +26,7 @@ abstract class WhereExposeTicketFunctions : Where() {
     infix fun TicketColumn.Assignment.`!=`(assignment: Assignment) = stdStage("!=", assignment.asString())
     infix fun TicketColumn.Priority.`==`(priority: ActualTicket.Priority) = stdStage("=", priority.asByte())
     infix fun TicketColumn.Priority.`!=`(priority: ActualTicket.Priority) = stdStage("!=", priority.asByte())
+
     @JvmName("lessThanPriority")
     @Suppress("NonAsciiCharacters")
     infix fun TicketColumn.Priority.`＜`(priority: ActualTicket.Priority) = stdStage("<", priority.asByte())
@@ -45,5 +46,10 @@ abstract class WhereExposeTicketFunctions : Where() {
             str = "$sqlColumnName NOT IN (${list.joinToString(",") { "?" }})",
             arguments = list.map(typeToInCompare)
         ).run(stages::add)
+    }
+
+    infix fun TicketColumn.ID.inRange(range: LongRange) {
+        TerminalStage("$sqlColumnName BETWEEN ${range.first} AND ${range.last}", emptyList())
+
     }
 }
