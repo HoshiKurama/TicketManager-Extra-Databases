@@ -25,11 +25,11 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
     compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC24")
-    //TODO impl mode JUST FOR TESTING OF DSL
-    implementation("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC24")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC24")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
 
     implementation("com.h2database:h2:2.1.214")
-    implementation("com.github.seratch:kotliquery:1.9.0")
+    compileOnly("com.github.seratch:kotliquery:1.9.0")
 }
 
 tasks.withType<KotlinCompile> {
@@ -46,7 +46,7 @@ tasks {
         dependencies {
             // Provided by Paper
             exclude { it.moduleGroup.startsWith("com.google") }
-            exclude { it.moduleGroup.startsWith("org.jetbrains") }
+            exclude { it.moduleGroup.startsWith("org.jetbrains") } //&& it.moduleName != "jvm"
             exclude(dependency("org.slf4j:.*:.*"))
             exclude(dependency("org.jetbrains:annotations:.*"))
             exclude(dependency("org.jetbrains.kotlin:.*:.*"))
@@ -55,6 +55,7 @@ tasks {
 
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
         relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
+        relocate("kotliquery", "com.github.hoshikurama.ticketmanager.shaded.kotliquery")
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
     }
 }

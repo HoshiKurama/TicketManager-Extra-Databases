@@ -60,6 +60,7 @@ abstract class Where(useWhereClause: Boolean = true) : CompositeStage {
     }
 
     class Action(useWhereClause: Boolean = true) : WhereExposeActionFunctions(useWhereClause) {
+        @Suppress("Unused")
         inline fun whereTicket(init: Ticket.() -> Unit) {
             selectTicket { // SELECT DISTINCT
                 +Distinct(TicketColumn.ID)

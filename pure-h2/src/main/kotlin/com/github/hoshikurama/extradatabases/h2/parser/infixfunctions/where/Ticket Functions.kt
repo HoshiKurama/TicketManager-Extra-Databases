@@ -11,7 +11,7 @@ import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
 import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket as TicketColumn
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket as ActualTicket
 
-@Suppress("FunctionName")
+@Suppress("FunctionName", "Unused")
 abstract class WhereExposeTicketFunctions : Where() {
 
     infix fun TicketColumn.ID.`==`(id: Long) = stdStage("=", id)

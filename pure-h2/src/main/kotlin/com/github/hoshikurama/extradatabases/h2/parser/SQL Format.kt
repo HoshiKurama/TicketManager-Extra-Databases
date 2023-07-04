@@ -1,7 +1,6 @@
 package com.github.hoshikurama.extradatabases.h2.parser
 
 fun StringBuilder.appendApply(other: String) = apply { append(other) }
-fun StringBuilder.appendApply(other: StringBuilder) = apply { append(other) }
 fun StringBuilder.appendAtFront(before: String) = apply { insert(0, before) }
 
 /**
