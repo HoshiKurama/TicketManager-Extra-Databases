@@ -50,6 +50,6 @@ abstract class WhereExposeTicketFunctions : Where() {
 
     infix fun TicketColumn.ID.inRange(range: LongRange) {
         TerminalStage("$sqlColumnName BETWEEN ${range.first} AND ${range.last}", emptyList())
-
+            .run(stages::add)
     }
 }

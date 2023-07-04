@@ -1,7 +1,9 @@
 package com.github.hoshikurama.extradatabases.h2.parser.column
 
 import com.github.hoshikurama.extradatabases.h2.extensions.ActionAsEnum
+import com.github.hoshikurama.extradatabases.h2.extensions.asByte
 import com.github.hoshikurama.extradatabases.h2.extensions.asString
+import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment as ActualAssignment
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator as ActualCreator
 import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket as ActualTicket
@@ -35,8 +37,8 @@ object Ticket {
         override val typeToInCompare = ActualCreator::asString
         override val sqlColumnName = "CREATOR"
     }
-    object Priority : TicketColumnObject<ActualTicket.Priority, String> {
-        override val typeToInCompare = ActualTicket.Priority::name
+    object Priority : TicketColumnObject<ActualTicket.Priority, Byte> {
+        override val typeToInCompare = ActualTicket.Priority::asByte
         override val sqlColumnName = "PRIORITY"
     }
     object Assignment : TicketColumnObject<ActualAssignment, String> {

@@ -53,10 +53,8 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
                 where(init)
                 raw(orderBySQL)
             }
-        }.apply { println(statement) }
-            .asQueryOf()
+        }.asQueryOf()
 
-        // TODO: KotliQuery is throwing an exception for unknown reasons
         val relevantIDs = usingSession { run(idQuery.map { it.long(1) }.asList) }
 
         // Handles empty result
@@ -381,40 +379,46 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
                 }
             }
 
-            whereAction {
-                constraints.closedBy?.let {
-                    when (it.symbol) {
-                        SearchConstraints.Symbol.EQUALS -> TicketMeta.ClosedBy `==` it.value
-                        SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.ClosedBy `!=` it.value
-                        else -> throw Exception("Impossible to reach here!")
+
+            val whereActionNeeded = constraints.run { listOf(closedBy, lastClosedBy, world, creationTime, keywords) }
+                .any { it != null }
+
+            if (whereActionNeeded) {
+                whereAction {
+                    constraints.closedBy?.let {
+                        when (it.symbol) {
+                            SearchConstraints.Symbol.EQUALS -> TicketMeta.ClosedBy `==` it.value
+                            SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.ClosedBy `!=` it.value
+                            else -> throw Exception("Impossible to reach here!")
+                        }
                     }
-                }
-                constraints.lastClosedBy?.let {
-                    when (it.symbol) {
-                        SearchConstraints.Symbol.EQUALS -> TicketMeta.LastClosedBy `==` it.value
-                        SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.LastClosedBy `!=` it.value
-                        else -> throw Exception("Impossible to reach here!")
+                    constraints.lastClosedBy?.let {
+                        when (it.symbol) {
+                            SearchConstraints.Symbol.EQUALS -> TicketMeta.LastClosedBy `==` it.value
+                            SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.LastClosedBy `!=` it.value
+                            else -> throw Exception("Impossible to reach here!")
+                        }
                     }
-                }
-                constraints.world?.let {
-                    when (it.symbol) {
-                        SearchConstraints.Symbol.EQUALS -> TicketMeta.CreationWorld `==` it.value
-                        SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.CreationWorld `!=` it.value
-                        else -> throw Exception("Impossible to reach here!")
+                    constraints.world?.let {
+                        when (it.symbol) {
+                            SearchConstraints.Symbol.EQUALS -> TicketMeta.CreationWorld `==` it.value
+                            SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.CreationWorld `!=` it.value
+                            else -> throw Exception("Impossible to reach here!")
+                        }
                     }
-                }
-                constraints.creationTime?.let {
-                    when (it.symbol) {
-                        SearchConstraints.Symbol.LESS_THAN -> TicketMeta.TimeCreated before it.value
-                        SearchConstraints.Symbol.GREATER_THAN -> TicketMeta.TimeCreated after it.value
-                        else -> throw Exception("Impossible to reach here!")
+                    constraints.creationTime?.let {
+                        when (it.symbol) {
+                            SearchConstraints.Symbol.LESS_THAN -> TicketMeta.TimeCreated before it.value
+                            SearchConstraints.Symbol.GREATER_THAN -> TicketMeta.TimeCreated after it.value
+                            else -> throw Exception("Impossible to reach here!")
+                        }
                     }
-                }
-                constraints.keywords?.let {
-                    when (it.symbol) {
-                        SearchConstraints.Symbol.EQUALS -> TicketMeta.Keywords `in` it.value
-                        SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.Keywords `!in` it.value
-                        else -> throw Exception("Impossible to reach here!")
+                    constraints.keywords?.let {
+                        when (it.symbol) {
+                            SearchConstraints.Symbol.EQUALS -> TicketMeta.Keywords `in` it.value
+                            SearchConstraints.Symbol.NOT_EQUALS -> TicketMeta.Keywords `!in` it.value
+                            else -> throw Exception("Impossible to reach here!")
+                        }
                     }
                 }
             }

@@ -3,7 +3,21 @@ package com.github.hoshikurama.extradatabases.h2.parser.components
 import com.github.hoshikurama.extradatabases.h2.parser.*
 import com.github.hoshikurama.extradatabases.h2.parser.column.ActionColumnField
 import com.github.hoshikurama.extradatabases.h2.parser.column.AugmentedColumn
+import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket
 import com.github.hoshikurama.extradatabases.h2.parser.column.TicketColumnField
+import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
+
+fun main() {
+    sql {
+        selectTicket {
+            +Ticket.ID
+
+            where {
+                Ticket.Creator `==` Creator.Console
+            }
+        }
+    }.statement.run(::println)
+}
 
 //@SelectMarker
 abstract class Select(private val tableName: String): CompositeStage {

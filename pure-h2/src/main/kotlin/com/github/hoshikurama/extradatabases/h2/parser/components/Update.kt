@@ -18,6 +18,7 @@ abstract class Update(protected val ids: List<Long>) : CompositeStage {
 
                     if (ids.size == 1) statement.append(" WHERE ID = ${ids.first()}")
                     else ids.joinToString(separator = ",", prefix = " WHERE ID IN (", postfix = ")")
+                        .run(statement::append)
                 }
         }
     }
