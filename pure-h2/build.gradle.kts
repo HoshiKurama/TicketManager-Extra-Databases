@@ -24,9 +24,10 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC24")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC24")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
     implementation("com.github.seratch:kotliquery:1.9.0")
     implementation("com.h2database:h2:2.1.214")
@@ -57,6 +58,7 @@ tasks {
 
         // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
+        relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
 
         relocate("kotliquery", "com.github.hoshikurama.extradatabases.shaded.kotliquery")

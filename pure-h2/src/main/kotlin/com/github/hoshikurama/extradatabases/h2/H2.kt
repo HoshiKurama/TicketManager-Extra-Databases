@@ -9,11 +9,12 @@ import com.github.hoshikurama.extradatabases.parser.column.Count
 import com.github.hoshikurama.extradatabases.parser.column.Distinct
 import com.github.hoshikurama.extradatabases.parser.column.TicketColumnField
 import com.github.hoshikurama.extradatabases.parser.column.TicketMeta
-import com.github.hoshikurama.ticketmanager.api.common.database.AsyncDatabase
+import com.github.hoshikurama.ticketmanager.api.common.database.CompletableFutureAsyncDatabase
 import com.github.hoshikurama.ticketmanager.api.common.database.DBResult
 import com.github.hoshikurama.ticketmanager.api.common.database.SearchConstraints
 import com.github.hoshikurama.ticketmanager.api.common.ticket.*
 import com.google.common.collect.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotliquery.*
 import org.h2.jdbcx.JdbcConnectionPool
 import java.sql.Connection
@@ -22,7 +23,8 @@ import java.time.Instant
 import java.util.concurrent.CompletableFuture
 import com.github.hoshikurama.extradatabases.parser.column.Action as ActionCol
 import com.github.hoshikurama.extradatabases.parser.column.Ticket as TicketCol
-class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
+
+class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutureAsyncDatabase {
     private val connectionPool: JdbcConnectionPool
 
     init {
@@ -61,7 +63,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
 
         // Handles empty result
         if (relevantIDs.isEmpty()) {
-            return DBResult(ImmutableList.of(), 0, 0, 0)
+            return DBResult(emptyList<Ticket>().toImmutableList(), 0, 0, 0)
                 .let { CompletableFuture.completedFuture(it) }
         }
 
@@ -115,9 +117,8 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
             .thenApplyAsync {
                 val fullTickets = ticketCF.join()
                     .map { it + actionsCF.join()[it.id]!! }
-                    .let { ImmutableList.copyOf(it) }
                 DBResult(
-                    filteredResults = fullTickets,
+                    filteredResults = fullTickets.toImmutableList(),
                     totalPages = totalPages,
                     totalResults = totalSize,
                     returnedPage = fixedPage
@@ -429,7 +430,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
 
     // ID Acquisition
 
-    private fun getTicketIDsWhere(init: Where.Ticket.() -> Unit): CompletableFuture<ImmutableList<Long>> = CompletableFuture.supplyAsync {
+    private fun getTicketIDsWhere(init: Where.Ticket.() -> Unit): CompletableFuture<List<Long>> = CompletableFuture.supplyAsync {
         val query = sql {
             selectTicket {
                 +Distinct(TicketCol.ID)
@@ -444,26 +445,26 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
             ?: ImmutableList.of() // This prevents bug I remember happening in the past with one of the db libraries
     }
 
-    override fun getTicketIDsWithUpdatesAsync(): CompletableFuture<ImmutableList<Long>> {
+    override fun getTicketIDsWithUpdatesAsync(): CompletableFuture<List<Long>> {
         return getTicketIDsWhere { TicketCol.StatusUpdate `==` true }
     }
 
-    override fun getTicketIDsWithUpdatesForAsync(creator: Creator): CompletableFuture<ImmutableList<Long>> {
+    override fun getTicketIDsWithUpdatesForAsync(creator: Creator): CompletableFuture<List<Long>> {
         return getTicketIDsWhere {
             TicketCol.StatusUpdate `==` true
             TicketCol.Creator `==` creator
         }
     }
 
-    override fun getOwnedTicketIDsAsync(creator: Creator): CompletableFuture<ImmutableList<Long>> {
+    override fun getOwnedTicketIDsAsync(creator: Creator): CompletableFuture<List<Long>> {
         return getTicketIDsWhere { TicketCol.Creator `==` creator }
     }
 
-    override fun getOpenTicketIDsAsync(): CompletableFuture<ImmutableList<Long>> {
+    override fun getOpenTicketIDsAsync(): CompletableFuture<List<Long>> {
         return getTicketIDsWhere { TicketCol.Status `==` Ticket.Status.OPEN }
     }
 
-    override fun getOpenTicketIDsForUser(creator: Creator): CompletableFuture<ImmutableList<Long>> {
+    override fun getOpenTicketIDsForUser(creator: Creator): CompletableFuture<List<Long>> {
         return getTicketIDsWhere {
             TicketCol.Status `==` Ticket.Status.OPEN
             TicketCol.Creator `==` creator
@@ -532,7 +533,7 @@ private fun Row.toTicket(): Ticket {
         status = Ticket.Status.valueOf(string(4)),
         assignedTo = stringOrNull(5)?.run(::AssignmentString)?.asAssignmentType() ?: Assignment.Nobody,
         creatorStatusUpdate = boolean(6),
-        actions = ImmutableList.of()
+        actions = emptyList<Action>().toImmutableList()
     )
 }
 
