@@ -1,12 +1,14 @@
 package com.github.hoshikurama.extradatabases.h2
 
-import com.github.hoshikurama.extradatabases.h2.extensions.*
-import com.github.hoshikurama.extradatabases.h2.extensions.ActionAsEnum
-import com.github.hoshikurama.extradatabases.h2.parser.column.Count
-import com.github.hoshikurama.extradatabases.h2.parser.column.Distinct
-import com.github.hoshikurama.extradatabases.h2.parser.column.TicketColumnField
-import com.github.hoshikurama.extradatabases.h2.parser.column.TicketMeta
-import com.github.hoshikurama.extradatabases.h2.parser.components.*
+import com.github.hoshikurama.extradatabases.common.extensions.*
+import com.github.hoshikurama.extradatabases.parser.components.SQL
+import com.github.hoshikurama.extradatabases.parser.components.Update
+import com.github.hoshikurama.extradatabases.parser.components.Where
+import com.github.hoshikurama.extradatabases.parser.components.sql
+import com.github.hoshikurama.extradatabases.parser.column.Count
+import com.github.hoshikurama.extradatabases.parser.column.Distinct
+import com.github.hoshikurama.extradatabases.parser.column.TicketColumnField
+import com.github.hoshikurama.extradatabases.parser.column.TicketMeta
 import com.github.hoshikurama.ticketmanager.api.common.database.AsyncDatabase
 import com.github.hoshikurama.ticketmanager.api.common.database.DBResult
 import com.github.hoshikurama.ticketmanager.api.common.database.SearchConstraints
@@ -18,8 +20,8 @@ import java.sql.Connection
 import java.sql.Statement
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
-import com.github.hoshikurama.extradatabases.h2.parser.column.Action as ActionCol
-import com.github.hoshikurama.extradatabases.h2.parser.column.Ticket as TicketCol
+import com.github.hoshikurama.extradatabases.parser.column.Action as ActionCol
+import com.github.hoshikurama.extradatabases.parser.column.Ticket as TicketCol
 class H2(absoluteDataFolderPath: String, maxConnections: Int) : AsyncDatabase {
     private val connectionPool: JdbcConnectionPool
 

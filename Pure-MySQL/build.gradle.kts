@@ -8,28 +8,27 @@ plugins {
 }
 
 application {
-    mainClass.set("com.github.hoshikurama.extradatabase.h2.PaperPlugin")
+    mainClass.set("com.github.hoshikurama.extradatabase.mysql.PaperPlugin")
 }
 
 group = "com.github.hoshikurama"
-version = "10.0.0-SNAPSHOT"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io")
-
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC24")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC24")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC26")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC26")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
 
-    implementation("com.github.seratch:kotliquery:1.9.0")
-    implementation("com.h2database:h2:2.1.214")
+    implementation("com.mysql:mysql-connector-j:8.0.32")
+    implementation("com.github.jasync-sql:jasync-mysql:2.1.23")
     implementation(project(":Common"))
     implementation(project(":SQL-Parser"))
 }
@@ -58,7 +57,6 @@ tasks {
         // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
-
-        relocate("kotliquery", "com.github.hoshikurama.extradatabases.shaded.kotliquery")
+        //TODO SHADE IN APPLICABLE JARS
     }
 }
