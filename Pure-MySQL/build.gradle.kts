@@ -23,9 +23,12 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC26")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC26")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
 
     implementation("com.mysql:mysql-connector-j:8.0.32")
     implementation("com.github.jasync-sql:jasync-mysql:2.1.23")
@@ -51,11 +54,13 @@ tasks {
             exclude(dependency("org.slf4j:.*:.*"))
             exclude(dependency("org.jetbrains:annotations:.*"))
             exclude(dependency("org.jetbrains.kotlin:.*:.*"))
+            exclude(dependency("org.jetbrains.kotlinx:.*:.*"))
             exclude(dependency("joda-time:joda-time:.*"))
         }
 
         // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
+        relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
         //TODO SHADE IN APPLICABLE JARS
     }

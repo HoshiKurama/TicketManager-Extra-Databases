@@ -129,7 +129,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutur
 
     // Individual property setters
 
-    private fun setAsAsync(ticketID: Long, init: Update.Ticket.() -> Unit) = CompletableFuture.runAsync {
+    private inline fun setAsAsync(ticketID: Long, crossinline init: Update.Ticket.() -> Unit) = CompletableFuture.runAsync {
         val query = sql {
             update(ticketID, init)
         }.asQueryOf()
@@ -138,7 +138,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutur
     }
 
     override fun setAssignmentAsync(ticketID: Long, assignment: Assignment): CompletableFuture<Void> =
-        setAsAsync(ticketID){ TicketCol.Assignment `=` assignment }
+        setAsAsync(ticketID) { TicketCol.Assignment `=` assignment }
     override fun setCreatorStatusUpdateAsync(ticketID: Long, status: Boolean): CompletableFuture<Void> =
         setAsAsync(ticketID) { TicketCol.StatusUpdate `=` status }
     override fun setPriorityAsync(ticketID: Long, priority: Ticket.Priority): CompletableFuture<Void> =
