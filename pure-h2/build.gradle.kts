@@ -8,7 +8,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.github.hoshikurama.extradatabase.h2.PaperPlugin")
+    mainClass.set("com.github.hoshikurama.extradatabase.h2.BukkitPlugin")
 }
 
 group = "com.github.hoshikurama"

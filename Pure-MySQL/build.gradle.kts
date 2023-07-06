@@ -8,7 +8,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.github.hoshikurama.extradatabase.mysql.PaperPlugin")
+    mainClass.set("com.github.hoshikurama.extradatabase.mysql.BukkitPlugin")
 }
 
 group = "com.github.hoshikurama"
@@ -55,13 +55,11 @@ tasks {
             exclude(dependency("org.jetbrains:annotations:.*"))
             exclude(dependency("org.jetbrains.kotlin:.*:.*"))
             exclude(dependency("org.jetbrains.kotlinx:.*:.*"))
-            exclude(dependency("joda-time:joda-time:.*"))
         }
 
         // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
         relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
-        relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
         //TODO SHADE IN APPLICABLE JARS
     }
 }
