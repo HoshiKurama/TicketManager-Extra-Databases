@@ -31,7 +31,7 @@ abstract class Select(private val tableName: String): CompositeStage {
             listOf(
                 stringOnlyStage("SELECT"),
                 SQLFormat.spacedCommas(columns),
-                stringOnlyStage("FROM \"$tableName\""),
+                stringOnlyStage("FROM $tableName"),
                 stages
                     .map(Stage::parseStage)
                     .run(SQLFormat::spacedAND),
