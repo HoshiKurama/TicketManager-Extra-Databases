@@ -1,0 +1,13 @@
+name: ExtraDatabasesMySQL
+version: 10.0.0
+main: com.github.hoshikurama.extradatabases.mysql.BukkitPlugin
+api-version: 1.19
+authors: [HoshiKurama]
+folia-supported: true
+dependencies:
+  - name: TicketManager
+    required: true
+    bootstrap: false
+load-after:
+  - name: TicketManager
+    bootstrap: false
