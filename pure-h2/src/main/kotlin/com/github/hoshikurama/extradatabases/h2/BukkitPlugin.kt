@@ -6,15 +6,16 @@ import org.bukkit.plugin.java.JavaPlugin
 
 @Suppress("UNUSED")
 class BukkitPlugin : JavaPlugin() {
+    private var closeDBIfOpen: (() -> Unit)? = null
 
     override fun onEnable() {
-        Bukkit.getServicesManager()
+        closeDBIfOpen = Bukkit.getServicesManager()
             .getRegistration(TicketManagerDatabaseRegister::class.java)
             ?.provider
             ?.register2("H2", H2Builder(dataFolder.toPath()).createBuilder())
     }
 
     override fun onDisable() {
-        // Not needed! TicketManager calls closeDatabase()
+        closeDBIfOpen?.invoke()
     }
 }
