@@ -12,7 +12,7 @@ application {
 }
 
 group = "com.github.hoshikurama"
-version = "1.0-SNAPSHOT"
+version = "10.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -23,8 +23,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC30")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC30")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")

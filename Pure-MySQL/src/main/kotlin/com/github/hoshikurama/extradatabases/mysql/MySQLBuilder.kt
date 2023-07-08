@@ -21,11 +21,11 @@ class MySQLBuilder(dataFolder: Path) : DatabaseInitializer<MySQLConfigParameters
         return MySQLConfigParameters(
             autoUpdateConfig = playerConfigMap["Auto_Update_Config"]?.toBooleanStrictOrNull()
                 ?: internalConfigMap["Auto_Update_Config"]!!.toBooleanStrict(),
-            port = playerConfigMap["MySQL_Port"] ?: internalConfigMap["MySQL_Port"]!!,
-            host = playerConfigMap["MySQL_Host"] ?: internalConfigMap["MySQL_Host"]!!,
-            dbName = playerConfigMap["MySQL_DBName"] ?: internalConfigMap["MySQL_DBName"]!!,
-            username = playerConfigMap["MySQL_Username"] ?: internalConfigMap["MySQL_Username"]!!,
-            password = playerConfigMap["MySQL_Password"] ?: internalConfigMap["MySQL_Password"]!!,
+            port = playerConfigMap["MySQL_Port"]!!,
+            host = playerConfigMap["MySQL_Host"]!!,
+            dbName = playerConfigMap["MySQL_DBName"]!!,
+            username = playerConfigMap["MySQL_Username"]!!,
+            password = playerConfigMap["MySQL_Password"]!!,
         )
     }
 

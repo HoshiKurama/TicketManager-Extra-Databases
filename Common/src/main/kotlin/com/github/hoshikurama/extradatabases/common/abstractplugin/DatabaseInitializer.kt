@@ -43,8 +43,14 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
         ).map { c ->
             c.asSequence()
                 .filterNot { it.startsWith("#") }
-                .map { it.split(":", limit = 2).map(String::trim) }
-                .map { it[0] to it[1] }
+                .map { it.split(": ", limit = 2) }
+                .map { it[0] to StringBuilder(it[1]) }
+                .onEach { (_, sb) ->
+                    listOf(sb.lastIndex, 0)
+                        .filter { sb[it] == '\"' || sb[it] == '\'' }
+                        .forEach(sb::deleteCharAt)
+                }
+                .map { it.first to it.second.toString() }
                 .toMap()
         }
         val config = buildConfig(

@@ -17,11 +17,9 @@ import com.github.hoshikurama.ticketmanager.api.common.ticket.*
 import com.github.jasync.sql.db.*
 import com.github.jasync.sql.db.mysql.MySQLConnectionBuilder
 import com.github.jasync.sql.db.mysql.MySQLQueryResult
-import com.google.common.collect.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import java.time.Instant
-import java.util.concurrent.CompletableFuture
 import com.github.hoshikurama.extradatabases.parser.column.Ticket as TicketCol
 import com.github.hoshikurama.extradatabases.parser.column.Action as ActionCol
 
@@ -44,7 +42,8 @@ class MySQL(
     )
     private val suspendingConnection: SuspendingConnection = connectionPool.asSuspending
 
-    private suspend fun SQL.Completed.sendPreparedStatement() = suspendingConnection.sendPreparedStatement(statement, args)
+    private suspend fun SQL.Completed.sendPreparedStatement() =
+        suspendingConnection.sendPreparedStatement(statement, args)
 
     private inline fun <T> QueryResult.mapRowData(crossinline mapper: (RowData) -> T) = rows.map(mapper)
 
@@ -456,8 +455,7 @@ class MySQL(
         suspend fun tableNotExists(table: String) = suspendingConnection
             .sendQuery("SHOW TABLES;")
             .mapRowData { it.getString(0)!! }
-            .first()
-            .lowercase() == table.lowercase()
+            .none { it.lowercase() == table.lowercase() }
 
         if (tableNotExists("TicketManager_V8_Tickets")) {
             suspendingConnection.sendQuery(

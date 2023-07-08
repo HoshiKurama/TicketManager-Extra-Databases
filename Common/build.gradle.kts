@@ -14,8 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC30")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     compileOnly("org.yaml:snakeyaml:2.0")
 }
