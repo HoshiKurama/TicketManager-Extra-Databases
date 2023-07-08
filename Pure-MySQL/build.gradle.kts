@@ -36,10 +36,6 @@ dependencies {
     implementation(project(":SQL-Parser"))
 }
 
-kotlin {
-
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
