@@ -60,6 +60,9 @@ tasks {
         // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
         relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
-        //TODO SHADE IN APPLICABLE JARS
+        relocate("io.netty", "com.github.hoshikurama.extradatabase.shaded.io.netty")
+        relocate("com.mysql", "com.github.hoshikurama.extradatabase.shaded.mysql")
+        relocate("com.jasync", "com.github.hoshikurama.extradatabase.shaded.jasync")
+    //TODO SHADE IN APPLICABLE JARS
     }
 }
