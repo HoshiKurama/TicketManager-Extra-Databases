@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     application
     java
@@ -24,9 +24,9 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC30")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC30")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
     implementation("com.github.seratch:kotliquery:1.9.0")
