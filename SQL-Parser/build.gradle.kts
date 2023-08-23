@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     java
 }
 
@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC29")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC29")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0")
     compileOnly(project(":Common"))
 }
 

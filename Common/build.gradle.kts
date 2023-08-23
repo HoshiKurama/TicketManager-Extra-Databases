@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
     java
 }
 
@@ -14,9 +15,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC30")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    compileOnly("org.yaml:snakeyaml:2.0")
+    compileOnly("org.yaml:snakeyaml:2.1")
 }
 
 tasks.withType<KotlinCompile> {

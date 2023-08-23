@@ -1,8 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.ben-manes.versions") version "0.47.0"
     application
     java
 }
@@ -23,15 +24,15 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0-RC30")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0-RC30")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    implementation("com.mysql:mysql-connector-j:8.0.32")
-    implementation("com.github.jasync-sql:jasync-mysql:2.1.23")
+    implementation("com.mysql:mysql-connector-j:8.1.0")
+    implementation("com.github.jasync-sql:jasync-mysql:2.2.3")
     implementation(project(":Common"))
     implementation(project(":SQL-Parser"))
 }
@@ -63,6 +64,5 @@ tasks {
         relocate("io.netty", "com.github.hoshikurama.extradatabase.shaded.io.netty")
         relocate("com.mysql", "com.github.hoshikurama.extradatabase.shaded.mysql")
         relocate("com.jasync", "com.github.hoshikurama.extradatabase.shaded.jasync")
-    //TODO SHADE IN APPLICABLE JARS
     }
 }
