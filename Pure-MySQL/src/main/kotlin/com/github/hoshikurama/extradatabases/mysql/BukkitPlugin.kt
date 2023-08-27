@@ -8,10 +8,16 @@ class BukkitPlugin : JavaPlugin() {
     private var closeDBIfOpen: (() -> Unit)? = null
 
     override fun onEnable() {
+        val directory = dataFolder.toPath()
+            .resolveSibling("TicketManager")
+            .resolve("addons")
+            .resolve("ExtraDatabases")
+            .resolve("MySQL")
+
         closeDBIfOpen = Bukkit.getServicesManager()
             .getRegistration(TicketManagerDatabaseRegister::class.java)
             ?.provider
-            ?.register1("MYSQL", MySQLBuilder(dataFolder.toPath()).createBuilder())
+            ?.register1("MYSQL", MySQLBuilder(directory).createBuilder())
     }
 
     override fun onDisable() {
