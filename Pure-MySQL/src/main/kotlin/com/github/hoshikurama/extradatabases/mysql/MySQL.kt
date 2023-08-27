@@ -151,7 +151,7 @@ class MySQL(
 
     override suspend fun insertActionAsync(id: Long, action: Action): Deferred<Unit> {
         suspendingConnection.sendPreparedStatement(
-            query = "INSERT INTO TicketManager_V8_Actions (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
+            query = "INSERT INTO TicketManager_V10_Actions (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
             values = listOf(
                 id,
                 action.getEnumForDB().name,
@@ -170,7 +170,7 @@ class MySQL(
 
     override suspend fun insertNewTicketAsync(ticket: Ticket): Long {
         val id = suspendingConnection.sendPreparedStatement(
-            query = "INSERT INTO TicketManager_V8_Tickets (CREATOR, PRIORITY, STATUS, ASSIGNED_TO, STATUS_UPDATE_FOR_CREATOR) VALUES (?,?,?,?,?);",
+            query = "INSERT INTO TicketManager_V10_Tickets (CREATOR, PRIORITY, STATUS, ASSIGNED_TO, STATUS_UPDATE_FOR_CREATOR) VALUES (?,?,?,?,?);",
             values = listOf(
                 ticket.creator.asString(),
                 ticket.priority.asByte(),
@@ -457,10 +457,10 @@ class MySQL(
             .mapRowData { it.getString(0)!! }
             .none { it.lowercase() == table.lowercase() }
 
-        if (tableNotExists("TicketManager_V8_Tickets")) {
+        if (tableNotExists("TicketManager_V10_Tickets")) {
             suspendingConnection.sendQuery(
                 """
-                        CREATE TABLE TicketManager_V8_Tickets (
+                        CREATE TABLE TicketManager_V10_Tickets (
                             ID BIGINT NOT NULL AUTO_INCREMENT,
                             CREATOR VARCHAR(70) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
                             PRIORITY TINYINT NOT NULL,
@@ -475,10 +475,10 @@ class MySQL(
             )
         }
 
-        if (tableNotExists("TicketManager_V8_Actions")) {
+        if (tableNotExists("TicketManager_V10_Actions")) {
             suspendingConnection.sendQuery(
                 """
-                        CREATE TABLE TicketManager_V8_Actions (
+                        CREATE TABLE TicketManager_V10_Actions (
                             ACTION_ID BIGINT NOT NULL AUTO_INCREMENT,
                             TICKET_ID BIGINT NOT NULL,
                             ACTION_TYPE VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,

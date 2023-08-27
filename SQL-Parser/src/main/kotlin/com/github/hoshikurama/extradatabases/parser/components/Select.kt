@@ -51,7 +51,7 @@ abstract class Select(private val tableName: String): CompositeStage {
             .run(stages::add)
     }
 
-    class Ticket : Select("TicketManager_V8_Tickets") {
+    class Ticket : Select("TicketManager_V10_Tickets") {
         operator fun TicketColumnField.unaryPlus() {
             stringOnlyStage(sqlColumnName).run(columns::add)
         }
@@ -64,7 +64,7 @@ abstract class Select(private val tableName: String): CompositeStage {
         }
     }
 
-    class Action : Select("TicketManager_V8_Actions") {
+    class Action : Select("TicketManager_V10_Actions") {
         operator fun ActionColumnField.unaryPlus() {
             stringOnlyStage(sqlColumnName).run(columns::add)
         }
