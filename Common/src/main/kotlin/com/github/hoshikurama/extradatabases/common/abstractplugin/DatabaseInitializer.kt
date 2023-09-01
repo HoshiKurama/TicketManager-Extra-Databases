@@ -4,6 +4,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createFile
 import kotlin.io.path.notExists
 
 interface ConfigParameters {
@@ -32,6 +33,7 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
         val configPath = dataFolder.resolve("config.yml")
         if (configPath.notExists()) {
             pushInfoToConsole("Config file not found. Generating new one.")
+            configPath.createFile()
             updateConfig(::loadInternalConfig) { listOf() }
         }
 
@@ -89,7 +91,12 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
         }
 
         // Write Config file
-        val writer = dataFolder.resolve("config.yml").toFile().bufferedWriter()
+        val writer = dataFolder
+            .resolve("config.yml")
+            .apply { if (notExists()) createFile() }
+            .toFile()
+            .bufferedWriter()
+
         newValues.forEachIndexed { index, str ->
             writer.write(str)
 

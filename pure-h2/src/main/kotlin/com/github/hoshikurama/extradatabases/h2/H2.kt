@@ -151,7 +151,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutur
     override fun insertActionAsync(id: Long, action: Action): CompletableFuture<Void> = CompletableFuture.runAsync {
         usingSession {
             update(
-                queryOf("INSERT INTO \"TicketManager_v10_Actions\" (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
+                queryOf("INSERT INTO TicketManager_v10_Actions (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
                     id,
                     action.getEnumForDB().name,
                     action.user.asString(),
@@ -172,7 +172,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutur
 
         val id = try {
             connection = connectionPool.connection
-            val statement = connection.prepareStatement("INSERT INTO \"TicketManager_v10_Tickets\" (CREATOR, PRIORITY, STATUS, ASSIGNED_TO, STATUS_UPDATE_FOR_CREATOR) VALUES(?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS)
+            val statement = connection.prepareStatement("INSERT INTO TicketManager_v10_Tickets (CREATOR, PRIORITY, STATUS, ASSIGNED_TO, STATUS_UPDATE_FOR_CREATOR) VALUES (?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS)
             statement.setString(1, ticket.creator.asString())
             statement.setByte(2, ticket.priority.asByte())
             statement.setString(3, ticket.status.name)
@@ -193,7 +193,7 @@ class H2(absoluteDataFolderPath: String, maxConnections: Int) : CompletableFutur
             ticket.actions.forEach {
                 usingSession {
                     update(
-                        queryOf("INSERT INTO \"TicketManager_v10_Actions\" (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
+                        queryOf("INSERT INTO TicketManager_v10_Actions (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
                             id,
                             it.getEnumForDB().name,
                             it.user.asString(),
