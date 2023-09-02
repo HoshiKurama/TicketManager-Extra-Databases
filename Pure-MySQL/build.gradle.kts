@@ -63,8 +63,9 @@ tasks {
         relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
 
         //
-        relocate("io.netty", "com.github.hoshikurama.extradatabase.shaded.io.netty")
-        relocate("com.mysql", "com.github.hoshikurama.extradatabase.shaded.mysql")
-        relocate("com.jasync", "com.github.hoshikurama.extradatabase.shaded.jasync")
+        relocate("io.netty", "com.github.hoshikurama.extradatabases.shaded.io.netty")
+        relocate("com.mysql", "com.github.hoshikurama.extradatabases.shaded.mysql")
+        relocate("com.github.jasync", "com.github.hoshikurama.extradatabases.shaded.jasync")
+        relocate("io.github.oshai","com.github.hoshikurama.extradatabases.shaded.oshai")
     }
 }
