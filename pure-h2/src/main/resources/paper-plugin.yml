@@ -1,13 +1,12 @@
 name: ExtraDatabasesH2
-version: 10.0.0
+version: '10.0.0'
 main: com.github.hoshikurama.extradatabases.h2.BukkitPlugin
-api-version: 1.19
+api-version: '1.19'
 authors: [HoshiKurama]
 folia-supported: true
 dependencies:
-  - name: TicketManager
-    required: true
-    bootstrap: false
-load-after:
-  - name: TicketManager
-    bootstrap: false
+    server:
+      TicketManager:
+        load: AFTER
+        required: false
+        join-classpath: true

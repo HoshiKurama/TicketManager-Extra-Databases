@@ -1,0 +1,6 @@
+name: ExtraDatabasesH2
+version: 10.0.0
+main: com.github.hoshikurama.extradatabases.mysql.BukkitPlugin
+api-version: 1.19
+authors: [HoshiKurama]
+depend: [TicketManager]
