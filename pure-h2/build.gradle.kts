@@ -63,6 +63,7 @@ tasks {
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
 
         relocate("kotliquery", "com.github.hoshikurama.extradatabases.shaded.kotliquery")
+        relocate("com.zaxxer.hikari", "com.github.hoshikurama.extradatabases.shaded.hikari")
         relocate("org.h2", "com.github.hoshikurama.extradatabases.shaded.h2")
     }
 }
