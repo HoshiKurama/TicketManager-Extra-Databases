@@ -26,7 +26,7 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
 
         // Generate Data Folder
         if (dataFolder.notExists())
-            dataFolder.toFile().mkdir()
+            dataFolder.toFile().mkdirs()
 
         // Generate Config File
         val configPath = dataFolder.resolve("config.yml")
