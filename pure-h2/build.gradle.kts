@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.github.ben-manes.versions") version "0.47.0"
     application
@@ -27,7 +27,7 @@ dependencies {
 
     compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0")
     compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
     compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
     implementation("com.github.seratch:kotliquery:1.9.0")
@@ -63,5 +63,7 @@ tasks {
         relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
 
         relocate("kotliquery", "com.github.hoshikurama.extradatabases.shaded.kotliquery")
+        relocate("com.zaxxer.hikari", "com.github.hoshikurama.extradatabases.shaded.hikari")
+        relocate("org.h2", "com.github.hoshikurama.extradatabases.shaded.h2")
     }
 }
