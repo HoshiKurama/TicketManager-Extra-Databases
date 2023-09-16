@@ -111,7 +111,7 @@ class MySQL(
                     raw("ORDER BY TICKET_ID ASC, EPOCH_TIME ASC")
                 }
             }.sendPreparedStatement()
-                .mapRowData { it.getLong(0)!! to it.toAction() }
+                .mapRowData { it.getLong(1)!! to it.toAction() }
                 .groupBy({ it.first }, { it.second })
         }
 
