@@ -13,7 +13,7 @@ application {
 }
 
 group = "com.github.hoshikurama"
-version = "10.0.2"
+version = "10.0.3"
 
 repositories {
     mavenCentral()
