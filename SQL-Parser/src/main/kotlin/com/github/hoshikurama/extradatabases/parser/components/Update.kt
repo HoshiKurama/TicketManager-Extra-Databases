@@ -14,7 +14,7 @@ abstract class Update(protected val ids: List<Long>) : CompositeStage {
         override fun parseStage(): TerminalStage {
             return SQLFormat.spacedAND(stages)
                 .apply {
-                    statement.appendAtFront("UPDATE TicketManager_V8_Tickets SET ")
+                    statement.appendAtFront("UPDATE TicketManager_V10_Tickets SET ")
 
                     if (ids.size == 1) statement.append(" WHERE ID = ${ids.first()}")
                     else ids.joinToString(separator = ",", prefix = " WHERE ID IN (", postfix = ")")
