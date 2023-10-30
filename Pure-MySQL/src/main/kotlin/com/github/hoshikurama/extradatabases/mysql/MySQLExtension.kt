@@ -2,13 +2,19 @@ package com.github.hoshikurama.extradatabases.mysql
 
 import com.github.hoshikurama.extradatabases.common.abstractplugin.ConfigParameters
 import com.github.hoshikurama.extradatabases.common.abstractplugin.DatabaseInitializer
-import com.github.hoshikurama.ticketmanager.api.common.database.AsyncDatabase
+import com.github.hoshikurama.ticketmanager.api.registry.database.AsyncDatabase
 import org.bukkit.Bukkit
 import java.nio.file.Path
 import java.util.logging.Level
 
-class MySQLBuilder(dataFolder: Path) : DatabaseInitializer<MySQLConfigParameters, AsyncDatabase>
-    (dataFolder, BukkitPlugin::class.java.classLoader) {
+class MySQLExtension : DatabaseInitializer<MySQLConfigParameters>() {
+    override fun buildDB(config: MySQLConfigParameters, dataFolder: Path): AsyncDatabase {
+        return MySQL(config.host, config.port, config.dbName, config.username, config.password)
+    }
+
+    override fun getDirectoryPath(tmAddonsPath: Path): Path {
+        return tmAddonsPath.resolve("ExtraDatabases").resolve("MySQL")
+    }
 
     override fun pushInfoToConsole(msg: String) {
         Bukkit.getLogger().log(Level.INFO, msg)
@@ -28,11 +34,6 @@ class MySQLBuilder(dataFolder: Path) : DatabaseInitializer<MySQLConfigParameters
             password = playerConfigMap["MySQL_Password"]!!,
         )
     }
-
-    override fun buildDBFunction(config: MySQLConfigParameters): AsyncDatabase {
-        return MySQL(config.host, config.port, config.dbName, config.username, config.password)
-    }
-
 }
 
 class MySQLConfigParameters(

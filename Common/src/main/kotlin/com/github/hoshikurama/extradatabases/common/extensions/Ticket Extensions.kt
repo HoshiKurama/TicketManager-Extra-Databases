@@ -1,8 +1,8 @@
 package com.github.hoshikurama.extradatabases.common.extensions
 
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket
+import com.github.hoshikurama.ticketmanager.api.ticket.Assignment
+import com.github.hoshikurama.ticketmanager.api.ticket.Creator
+import com.github.hoshikurama.ticketmanager.api.ticket.Ticket
 import java.util.*
 
 private const val ASSIGNMENT_CONSOLE = "CONSOLE"

@@ -3,9 +3,9 @@ package com.github.hoshikurama.extradatabases.parser.column
 import com.github.hoshikurama.extradatabases.common.extensions.ActionAsEnum
 import com.github.hoshikurama.extradatabases.common.extensions.asByte
 import com.github.hoshikurama.extradatabases.common.extensions.asString
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment as ActualAssignment
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator as ActualCreator
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket as ActualTicket
+import com.github.hoshikurama.ticketmanager.api.ticket.Assignment as ActualAssignment
+import com.github.hoshikurama.ticketmanager.api.ticket.Creator as ActualCreator
+import com.github.hoshikurama.ticketmanager.api.ticket.Ticket as ActualTicket
 
 sealed interface NamedColumn {
     val sqlColumnName: String

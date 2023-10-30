@@ -1,7 +1,7 @@
 package com.github.hoshikurama.extradatabases.common.extensions
 
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Action
-import com.github.hoshikurama.ticketmanager.api.common.ticket.ActionInfo
+import com.github.hoshikurama.ticketmanager.api.ticket.Action
+import com.github.hoshikurama.ticketmanager.api.ticket.ActionInfo
 
 fun Action.getMessage(): String? = when (this) {
     is ActionInfo.Assign -> assignment.asString()

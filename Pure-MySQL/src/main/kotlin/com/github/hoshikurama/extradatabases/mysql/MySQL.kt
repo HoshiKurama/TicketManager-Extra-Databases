@@ -9,15 +9,14 @@ import com.github.hoshikurama.extradatabases.parser.components.SQL
 import com.github.hoshikurama.extradatabases.parser.components.Update
 import com.github.hoshikurama.extradatabases.parser.components.Where
 import com.github.hoshikurama.extradatabases.parser.components.sql
-import com.github.hoshikurama.ticketmanager.api.common.TMCoroutine
-import com.github.hoshikurama.ticketmanager.api.common.database.AsyncDatabase
-import com.github.hoshikurama.ticketmanager.api.common.database.DBResult
-import com.github.hoshikurama.ticketmanager.api.common.database.SearchConstraints
-import com.github.hoshikurama.ticketmanager.api.common.ticket.*
+import com.github.hoshikurama.ticketmanager.api.registry.database.AsyncDatabase
+import com.github.hoshikurama.ticketmanager.api.registry.database.utils.DBResult
+import com.github.hoshikurama.ticketmanager.api.registry.database.utils.SearchConstraints
+import com.github.hoshikurama.ticketmanager.api.ticket.*
+import com.github.hoshikurama.tmcoroutine.TMCoroutine
 import com.github.jasync.sql.db.*
 import com.github.jasync.sql.db.mysql.MySQLConnectionBuilder
 import com.github.jasync.sql.db.mysql.MySQLQueryResult
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import java.time.Instant
 import com.github.hoshikurama.extradatabases.parser.column.Ticket as TicketCol
@@ -69,7 +68,7 @@ class MySQL(
 
         // Handles empty result
         if (relevantIDs.isEmpty()) {
-            return@coroutineScope DBResult(emptyList<Ticket>().toImmutableList(), 0, 0, 0)
+            return@coroutineScope DBResult(emptyList<Ticket>(), 0, 0, 0)
         }
 
         // Get relevant tickets
@@ -118,7 +117,6 @@ class MySQL(
         // Note: Already sorted
         val fullTickets = ticketsDef.await()
             .map { it + actionsDef.await()[it.id]!! }
-            .toImmutableList()
 
         return@coroutineScope DBResult(
             filteredResults = fullTickets,
@@ -138,18 +136,24 @@ class MySQL(
         CompletableDeferred(Unit)
     }
 
-    override suspend fun setAssignmentAsync(ticketID: Long, assignment: Assignment): Deferred<Unit> =
+    override suspend fun setAssignmentAsync(ticketID: Long, assignment: Assignment) {
         setAsAsync(ticketID) { TicketCol.Assignment `=` assignment }
-    override suspend fun setCreatorStatusUpdateAsync(ticketID: Long, status: Boolean): Deferred<Unit> =
+    }
+
+    override suspend fun setCreatorStatusUpdateAsync(ticketID: Long, status: Boolean) {
         setAsAsync(ticketID) { TicketCol.StatusUpdate `=` status }
-    override suspend fun setPriorityAsync(ticketID: Long, priority: Ticket.Priority): Deferred<Unit> =
+    }
+
+    override suspend fun setPriorityAsync(ticketID: Long, priority: Ticket.Priority) {
         setAsAsync(ticketID) { TicketCol.Priority `=` priority }
-    override suspend fun setStatusAsync(ticketID: Long, status: Ticket.Status): Deferred<Unit> =
+    }
+    override suspend fun setStatusAsync(ticketID: Long, status: Ticket.Status) {
         setAsAsync(ticketID) { TicketCol.Status `=` status }
+    }
 
     // Database Additions
 
-    override suspend fun insertActionAsync(id: Long, action: Action): Deferred<Unit> {
+    override suspend fun insertActionAsync(id: Long, action: Action) {
         suspendingConnection.sendPreparedStatement(
             query = "INSERT INTO TicketManager_V10_Actions (TICKET_ID, ACTION_TYPE, CREATOR, MESSAGE, EPOCH_TIME, SERVER, WORLD, WORLD_X, WORLD_Y, WORLD_Z) VALUES (?,?,?,?,?,?,?,?,?,?);",
             values = listOf(
@@ -165,7 +169,7 @@ class MySQL(
                 action.location.let { if (it is ActionLocation.FromPlayer) it.z else null }
             )
         )
-        return CompletableDeferred(Unit)
+        return
     }
 
     override suspend fun insertNewTicketAsync(ticket: Ticket): Long {
@@ -182,7 +186,7 @@ class MySQL(
             .let { it as MySQLQueryResult }
             .lastInsertId
 
-        TMCoroutine.launchSupervised { ticket.actions.map { insertActionAsync(id, it) } }
+        TMCoroutine.Supervised.launch { ticket.actions.map { insertActionAsync(id, it) } }
         return id
     }
 
@@ -250,7 +254,7 @@ class MySQL(
         upperBound: Long,
         actor: Creator,
         ticketLoc: ActionLocation
-    ): Deferred<Unit> = coroutineScope {
+    ): Unit = coroutineScope {
         val curTime = Instant.now().epochSecond
         val action = ActionInfo(
             user = actor,
@@ -272,10 +276,10 @@ class MySQL(
             .sendPreparedStatement()
             .mapRowData { it.getLong(0)!! }
             .takeIf { it.isNotEmpty() }
-            ?: return@coroutineScope CompletableDeferred(Unit)
+            ?: return@coroutineScope
 
         // Close Tickets
-        val ticketWrite = launch {
+        launch {
             sql {
                 update(applicableIDs) {
                     TicketCol.Status `=` Ticket.Status.CLOSED
@@ -284,14 +288,10 @@ class MySQL(
         }
 
         // Write Actions
-        val actionWrites = launch {
-            applicableIDs
-                .map { insertActionAsync(it, action) }
-                .awaitAll()
+        launch {
+            applicableIDs.forEach { insertActionAsync(it, action) }
         }
-
-        listOf(ticketWrite, actionWrites).joinAll()
-        CompletableDeferred(Unit)
+        return@coroutineScope
     }
 
     // Counting
@@ -413,8 +413,7 @@ class MySQL(
             .sendPreparedStatement()
             .mapRowData { it.getLong(0)!! }
             .takeIf { it.isNotEmpty() }
-            ?.toImmutableList()
-            ?: emptyList<Long>().toImmutableList() // This prevents bug I remember happening in the past with one of the db libraries
+            ?: emptyList() // This prevents bug I remember happening in the past with one of the db libraries
     }
 
     override suspend fun getTicketIDsWithUpdatesAsync(): List<Long> {
@@ -538,6 +537,6 @@ private fun RowData.toTicket(): Ticket {
         status = getString(3)!!.run(Ticket.Status::valueOf),
         assignedTo = getString(4)?.run(::AssignmentString)?.asAssignmentType() ?: Assignment.Nobody,
         creatorStatusUpdate = getBoolean(5)!!,
-        actions = emptyList<Action>().toImmutableList()
+        actions = emptyList()
     )
 }

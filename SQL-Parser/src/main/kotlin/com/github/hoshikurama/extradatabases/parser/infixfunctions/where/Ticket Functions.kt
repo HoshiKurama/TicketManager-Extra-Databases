@@ -6,10 +6,10 @@ import com.github.hoshikurama.extradatabases.parser.column.InSupport
 import com.github.hoshikurama.extradatabases.parser.TerminalStage
 import com.github.hoshikurama.extradatabases.parser.column.TicketColumnField
 import com.github.hoshikurama.extradatabases.parser.components.Where
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Assignment
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
+import com.github.hoshikurama.ticketmanager.api.ticket.Assignment
+import com.github.hoshikurama.ticketmanager.api.ticket.Creator
 import com.github.hoshikurama.extradatabases.parser.column.Ticket as TicketColumn
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Ticket as ActualTicket
+import com.github.hoshikurama.ticketmanager.api.ticket.Ticket as ActualTicket
 
 @Suppress("FunctionName", "Unused")
 abstract class WhereExposeTicketFunctions : Where() {

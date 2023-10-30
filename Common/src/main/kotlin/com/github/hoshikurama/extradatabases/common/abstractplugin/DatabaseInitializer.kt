@@ -1,5 +1,9 @@
 package com.github.hoshikurama.extradatabases.common.abstractplugin
 
+import com.github.hoshikurama.ticketmanager.api.registry.config.Config
+import com.github.hoshikurama.ticketmanager.api.registry.database.AsyncDatabase
+import com.github.hoshikurama.ticketmanager.api.registry.database.DatabaseExtension
+import com.github.hoshikurama.ticketmanager.api.registry.locale.Locale
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.file.Files
@@ -11,19 +15,10 @@ interface ConfigParameters {
     val autoUpdateConfig: Boolean
 }
 
-abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
-    protected val dataFolder: Path,
-    private val classLoader4Config: ClassLoader
-) {
+abstract class DatabaseInitializer<TConfig : ConfigParameters>: DatabaseExtension {
 
-    protected abstract fun pushInfoToConsole(msg: String)
-    protected abstract fun buildConfig(
-        playerConfigMap: Map<String, String>,
-        internalConfigMap: Map<String, String>
-    ): Config
-    protected abstract fun buildDBFunction(config: Config): DBInterface
-
-    fun createBuilder(): () -> DBInterface {
+    final override suspend fun load(tmDirectory: Path, config: Config, locale: Locale): AsyncDatabase {
+        val dataFolder = getDirectoryPath(tmDirectory)
 
         // Generate Data Folder
         if (dataFolder.notExists())
@@ -34,14 +29,14 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
         if (configPath.notExists()) {
             pushInfoToConsole("Config file not found. Generating new one.")
             configPath.createFile()
-            updateConfig(::loadInternalConfig) { listOf() }
+            updateConfig(dataFolder, ::loadInternalConfig) { listOf() }
         }
 
         // Read Config
 
         val (playerConfigMap, internalConfigMap) = listOf(
             Files.readAllLines(configPath, Charsets.UTF_8),
-            loadInternalConfig(),
+            loadInternalConfig()
         ).map { c ->
             c.asSequence()
                 .filterNot { it.startsWith("#") }
@@ -55,24 +50,33 @@ abstract class DatabaseInitializer<Config : ConfigParameters, DBInterface>(
                 .map { it.first to it.second.toString() }
                 .toMap()
         }
-        val config = buildConfig(
+        val tConfig = buildConfig(
             playerConfigMap = playerConfigMap,
             internalConfigMap = internalConfigMap,
         )
 
         // Auto Update Config if requested
-        if (config.autoUpdateConfig)
-            updateConfig(::loadInternalConfig) { Files.readAllLines(configPath, Charsets.UTF_8) }
+        if (tConfig.autoUpdateConfig)
+            updateConfig(dataFolder, ::loadInternalConfig) { Files.readAllLines(configPath, Charsets.UTF_8) }
 
-        return { buildDBFunction(config) }
+        return buildDB(tConfig, dataFolder)
     }
 
-    private fun loadInternalConfig() = classLoader4Config
+    protected abstract fun buildDB(config: TConfig, dataFolder: Path): AsyncDatabase
+    protected abstract fun getDirectoryPath(tmAddonsPath: Path): Path
+    protected abstract fun pushInfoToConsole(msg: String)
+    protected abstract fun buildConfig(
+        playerConfigMap: Map<String, String>,
+        internalConfigMap: Map<String, String>
+    ): TConfig
+
+    private fun loadInternalConfig() = this::class.java.classLoader
         .getResourceAsStream("config.yml")
         ?.let(InputStream::reader)
         ?.let(InputStreamReader::readLines) ?: emptyList()
 
     private fun updateConfig(
+        dataFolder: Path,
         loadInternalConfig: () -> List<String>,
         loadPlayerConfig: () -> List<String>,
     ) {

@@ -2,17 +2,24 @@ package com.github.hoshikurama.extradatabases.h2
 
 import com.github.hoshikurama.extradatabases.common.abstractplugin.ConfigParameters
 import com.github.hoshikurama.extradatabases.common.abstractplugin.DatabaseInitializer
-import com.github.hoshikurama.ticketmanager.api.common.database.CompletableFutureAsyncDatabase
+import com.github.hoshikurama.ticketmanager.api.registry.database.AsyncDatabase
 import org.bukkit.Bukkit
 import java.nio.file.Path
 import java.util.logging.Level
 import kotlin.io.path.absolutePathString
 
-class H2Builder(dataFolder: Path) : DatabaseInitializer<H2ConfigParameters, CompletableFutureAsyncDatabase>
-    (dataFolder, BukkitPlugin::class.java.classLoader) {
+class PureH2DBExtension : DatabaseInitializer<H2ConfigParameters>() {
 
     override fun pushInfoToConsole(msg: String) {
         Bukkit.getLogger().log(Level.INFO, msg)
+    }
+
+    override fun buildDB(config: H2ConfigParameters, dataFolder: Path): AsyncDatabase {
+        return H2(dataFolder.absolutePathString(), config.maxConnections)
+    }
+
+    override fun getDirectoryPath(tmAddonsPath: Path): Path {
+        return tmAddonsPath.resolve("ExtraDatabases").resolve("H2")
     }
 
     override fun buildConfig(
@@ -25,10 +32,6 @@ class H2Builder(dataFolder: Path) : DatabaseInitializer<H2ConfigParameters, Comp
             maxConnections = playerConfigMap["Max_Connections"]?.toIntOrNull()
                 ?: internalConfigMap["Max_Connections"]!!.toInt()
         )
-    }
-
-    override fun buildDBFunction(config: H2ConfigParameters): CompletableFutureAsyncDatabase {
-        return H2(dataFolder.absolutePathString(), config.maxConnections)
     }
 }
 

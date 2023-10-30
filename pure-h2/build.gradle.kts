@@ -13,7 +13,7 @@ application {
 }
 
 group = "com.github.hoshikurama"
-version = "10.0.3"
+version = "11.0.0"
 
 repositories {
     mavenCentral()
@@ -25,10 +25,11 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Paper:10.0.0")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:10.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0-RC3")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.0-RC3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
     implementation("com.github.seratch:kotliquery:1.9.0")
     implementation("com.h2database:h2:2.2.220")
@@ -47,20 +48,15 @@ tasks.withType<JavaCompile> {
 
 tasks {
     shadowJar {
+        configurations = listOf(project.configurations.runtimeClasspath.get())
+        archiveBaseName.set("TMExtraDB-PureH2")
+
         dependencies {
-            // Provided by Paper
-            exclude { it.moduleGroup.startsWith("com.google") }
-            exclude { it.moduleGroup.startsWith("org.jetbrains") }
-            exclude(dependency("org.slf4j:.*:.*"))
-            exclude(dependency("org.jetbrains:annotations:.*"))
-            exclude(dependency("org.jetbrains.kotlin:.*:.*"))
-            exclude(dependency("joda-time:joda-time:.*"))
+            exclude { it.moduleGroup == "org.jetbrains.kotlin" }
         }
 
-        // Provided by TicketManager
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
         relocate("kotlinx", "com.github.hoshikurama.ticketmanager.shaded.kotlinx")
-        relocate("org.joda.time", "com.github.hoshikurama.ticketmanager.shaded.jodatime")
 
         relocate("kotliquery", "com.github.hoshikurama.extradatabases.shaded.kotliquery")
         relocate("com.zaxxer.hikari", "com.github.hoshikurama.extradatabases.shaded.hikari")

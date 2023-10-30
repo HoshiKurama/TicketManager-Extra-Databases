@@ -6,7 +6,7 @@ import com.github.hoshikurama.extradatabases.parser.column.AugmentedColumn
 import com.github.hoshikurama.extradatabases.parser.*
 import com.github.hoshikurama.extradatabases.parser.column.Ticket
 import com.github.hoshikurama.extradatabases.parser.column.TicketColumnField
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
+import com.github.hoshikurama.ticketmanager.api.ticket.Creator
 
 fun main() {
     sql {

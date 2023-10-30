@@ -4,7 +4,7 @@ import com.github.hoshikurama.extradatabases.common.extensions.ActionAsEnum
 import com.github.hoshikurama.extradatabases.parser.*
 import com.github.hoshikurama.extradatabases.parser.column.*
 import com.github.hoshikurama.extradatabases.parser.components.Where
-import com.github.hoshikurama.ticketmanager.api.common.ticket.Creator
+import com.github.hoshikurama.ticketmanager.api.ticket.Creator
 import com.github.hoshikurama.extradatabases.parser.column.ActionColumnField
 import com.github.hoshikurama.extradatabases.parser.column.InSupport
 import com.github.hoshikurama.extradatabases.parser.column.Max
