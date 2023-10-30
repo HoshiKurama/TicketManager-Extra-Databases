@@ -12,8 +12,8 @@ class MySQLExtension : DatabaseInitializer<MySQLConfigParameters>() {
         return MySQL(config.host, config.port, config.dbName, config.username, config.password)
     }
 
-    override fun getDirectoryPath(tmAddonsPath: Path): Path {
-        return tmAddonsPath.resolve("ExtraDatabases").resolve("MySQL")
+    override fun getDirectoryPath(tmDirectory: Path): Path {
+        return tmDirectory.resolve("addons").resolve("ExtraDatabases").resolve("MySQL")
     }
 
     override fun pushInfoToConsole(msg: String) {

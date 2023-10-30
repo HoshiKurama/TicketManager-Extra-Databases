@@ -18,8 +18,8 @@ class PureH2DBExtension : DatabaseInitializer<H2ConfigParameters>() {
         return H2(dataFolder.absolutePathString(), config.maxConnections)
     }
 
-    override fun getDirectoryPath(tmAddonsPath: Path): Path {
-        return tmAddonsPath.resolve("ExtraDatabases").resolve("H2")
+    override fun getDirectoryPath(tmDirectory: Path): Path {
+        return tmDirectory.resolve("addons").resolve("ExtraDatabases").resolve("H2")
     }
 
     override fun buildConfig(

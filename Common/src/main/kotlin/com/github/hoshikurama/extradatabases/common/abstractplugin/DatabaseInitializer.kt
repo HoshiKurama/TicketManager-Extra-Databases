@@ -63,7 +63,7 @@ abstract class DatabaseInitializer<TConfig : ConfigParameters>: DatabaseExtensio
     }
 
     protected abstract fun buildDB(config: TConfig, dataFolder: Path): AsyncDatabase
-    protected abstract fun getDirectoryPath(tmAddonsPath: Path): Path
+    protected abstract fun getDirectoryPath(tmDirectory: Path): Path
     protected abstract fun pushInfoToConsole(msg: String)
     protected abstract fun buildConfig(
         playerConfigMap: Map<String, String>,
