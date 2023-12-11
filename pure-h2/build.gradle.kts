@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm")
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
     application
     java
 }
@@ -25,8 +25,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0-RC7")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.0-RC7")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
