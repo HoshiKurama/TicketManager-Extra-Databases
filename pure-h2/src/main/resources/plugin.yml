@@ -1,5 +1,5 @@
 name: ExtraDatabasesH2
-version: 11.0.0
+version: 11.0.1
 main: com.github.hoshikurama.extradatabases.h2.BukkitPlugin
 api-version: 1.18
 authors: [HoshiKurama]
