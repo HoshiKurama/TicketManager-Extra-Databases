@@ -13,7 +13,7 @@ application {
 }
 
 group = "com.github.hoshikurama"
-version = "11.0.0"
+version = "11.0.1"
 
 repositories {
     mavenCentral()
@@ -51,6 +51,7 @@ tasks {
 
         dependencies {
             exclude { it.moduleGroup == "org.jetbrains.kotlin" }
+            exclude { it.moduleGroup == "org.jetbrains.kotlinx" }
         }
 
         relocate("kotlin", "com.github.hoshikurama.ticketmanager.shaded.kotlin")
