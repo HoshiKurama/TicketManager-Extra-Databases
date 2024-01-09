@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.1")
     compileOnly(project(":Common"))
 }
 
