@@ -24,12 +24,12 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.0")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.1")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.1")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    implementation("com.mysql:mysql-connector-j:8.2.0")
+    implementation("com.mysql:mysql-connector-j:8.3.0")
     implementation("com.github.jasync-sql:jasync-mysql:2.2.4")
     implementation(project(":Common"))
     implementation(project(":SQL-Parser"))

@@ -25,8 +25,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.0")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.0")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.1")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.1")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
