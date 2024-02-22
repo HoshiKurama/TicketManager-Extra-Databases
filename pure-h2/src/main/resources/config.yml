@@ -22,10 +22,6 @@
 #   ══════════════════════════════════════════════════════════════════════════════════════════════════════════════    #
 #                                                  H2 Config Values                                                   #
 #   ══════════════════════════════════════════════════════════════════════════════════════════════════════════════    #
-#   This extension does not require any setup aside from specifying the Database_Mode value in the TicketManager      #
-#   config. Any options below are optional or already have default values.                                            #
-#                                                                                                                     #
-#   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────    #
 Max_Connections: 3
 #   Specifies the maximum number of connections allowed by the connection pool. There are two circumstances where     #
 #   changing this value might be advisable:                                                                           #
