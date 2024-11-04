@@ -2,10 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.github.ben-manes.versions") version "0.50.0"
+    id("com.gradleup.shadow") version "8.3.5"
+    id("com.github.ben-manes.versions") version "0.51.0"
     application
-    java
 }
 
 application {
@@ -13,7 +12,7 @@ application {
 }
 
 group = "com.github.hoshikurama"
-version = "11.0.1"
+version = "11.1.0"
 
 repositories {
     mavenCentral()
@@ -23,26 +22,21 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.1")
-    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.0.1")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.1.1")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:TMCoroutine:11.1.1")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
     implementation("com.github.seratch:kotliquery:1.9.0")
-    implementation("com.h2database:h2:2.2.220")
+    implementation("com.h2database:h2:2.3.232")
     implementation(project(":Common"))
     implementation(project(":SQL-Parser"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+kotlin {
+    jvmToolchain(21)
 }
 
 tasks {

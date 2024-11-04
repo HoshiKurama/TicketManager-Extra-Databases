@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
-    java
 }
 
 group = "com.github.hoshikurama"
@@ -14,15 +11,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.0.1")
+    compileOnly("com.github.HoshiKurama.TicketManager_API:Common:11.1.1")
     compileOnly(project(":Common"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+kotlin {
+    jvmToolchain(21)
 }
